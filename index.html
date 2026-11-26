@@ -155,34 +155,21 @@
          TAB 1: DE BOEKENKAST & BUURTPLANKEN (STANDAARD)
          ====================================================================== -->
     <section id="view-plank" class="tab-view-section">
-      <!-- Hero Sectie -->
-      <div class="hero-card">
+      <!-- Compacte Hero Balk -->
+      <div class="hero-card hero-card-compact">
         <div class="hero-content">
-          <div class="hero-eyebrow">🌿 Landelijk Mini-Bieb Netwerk · 100% Buurtgedreven</div>
           <h1>Deel, leen en laat boeken zwerven door jouw buurt</h1>
           <p>
-            Ontdek welke boeken er nú bij buren en in fysieke MiniBiebs in jouw wijk staan — direct afgesproken via de BuurtChat.
+            Ontdek welke boeken er nú bij buren en in fysieke MiniBiebs in jouw wijk staan — direct afgesproken via BuurtChat.
           </p>
-          <div class="hero-actions">
-            <button class="btn btn-cream" onclick="switchTab('toevoegen')">
-              📷 Scan ISBN &amp; Zet Boek op je Plank
-            </button>
-            <button id="heroSecondaryActionBtn" class="btn btn-outline-cream" onclick="switchTab('marktplaats')">
-              🛍️ Bekijk de Boekenbeurs
-            </button>
-          </div>
         </div>
-
-        <div class="hero-showcase-box">
-          <div style="font-size:0.8rem; font-weight:700; color:#FDE68A; letter-spacing:0.03em; text-transform:uppercase;">
-            🏡 Hoe werkt het?
-          </div>
-          <div style="font-size:0.84rem; color:rgba(250,246,240,0.94); display:grid; gap:0.42rem;">
-            <div>🟢 <strong>Zwerfboek:</strong> Gratis houden, ruilen of doorgeven</div>
-            <div>🔵 <strong>Leenboek:</strong> Lokaal lenen van je buur</div>
-            <div>🟡 <strong>Koopboek:</strong> Klein prijsje (t/m € 5,-)</div>
-            <div>🟣 <strong>Boekenbeurs:</strong> Nieuwere &amp; duurdere boeken (&gt; € 5,-)</div>
-          </div>
+        <div class="hero-actions">
+          <button class="btn btn-cream btn-sm" onclick="switchTab('toevoegen')">
+            📷 Boek aanbieden
+          </button>
+          <button id="heroSecondaryActionBtn" class="btn btn-outline-cream btn-sm" onclick="switchTab('marktplaats')">
+            🛍️ Boekenbeurs
+          </button>
         </div>
       </div>
 
@@ -199,12 +186,11 @@
         </button>
       </div>
 
-      <!-- SUB-WEERGAVE 1: BOEKENKAST + DUIDELIJKE BOEKEN-ZOEKBALK -->
+      <!-- SUB-WEERGAVE 1: BOEKENKAST + COMPACTE BOEKEN-ZOEKBALK -->
       <div id="discoverPaneKast">
-        <div class="filter-panel">
+        <div class="filter-panel filter-panel-compact">
           <div class="filter-panel-heading">
             <h2 class="serif-heading filter-panel-title">🔎 Boeken zoeken in jouw buurt</h2>
-            <p class="filter-panel-subtitle">Typ een titel, auteur, ISBN of postcode en druk op <strong>Zoek boeken</strong> om direct door de buurtboekenkast te zoeken.</p>
           </div>
           <form class="filter-primary-row" onsubmit="handleBookSearchSubmit(event)">
             <input
@@ -223,13 +209,13 @@
               aria-label="Filter op postcode of woonplaats"
               oninput="handleSearchAndFilterChange()"
             />
-            <button type="submit" id="searchBooksSubmitBtn" class="btn btn-primary filter-search-submit-btn">
+            <button type="submit" id="searchBooksSubmitBtn" class="btn btn-primary btn-sm filter-search-submit-btn">
               🔍 Zoek boeken
             </button>
-            <button type="button" id="toggleExtraFiltersBtn" class="btn btn-outline" onclick="toggleExtraShelfFilters()" aria-expanded="false">
+            <button type="button" id="toggleExtraFiltersBtn" class="btn btn-outline btn-sm" onclick="toggleExtraShelfFilters()" aria-expanded="false">
               ⚙️ Meer filters
             </button>
-            <button type="button" class="btn btn-outline" onclick="resetAllShelfFilters()">
+            <button type="button" class="btn btn-outline btn-sm" onclick="resetAllShelfFilters()">
               Wis
             </button>
           </form>
