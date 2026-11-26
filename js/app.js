@@ -768,22 +768,45 @@ window.handleBookCoverLoad = function (imgEl) {
   }
 };
 
-// Subtiele mobiele haptic feedback (trilfeedback op ondersteunde toestellen zoals Android PWA)
+// Voelbare maar subtiele mobiele haptic feedback (Android Vibration API + iOS 17.4+ switch Taptic fallback)
 const HAPTIC_PATTERNS = {
-  light: 10,
-  medium: 18,
-  success: [12, 35, 18],
-  warning: [24, 40, 24]
+  light: 22,
+  medium: 35,
+  success: [22, 45, 32],
+  warning: [40, 50, 40]
 };
+
+let _iosHapticLabel = null;
+function triggerIosSwitchHaptic() {
+  try {
+    if (typeof document === 'undefined' || !document.body) return;
+    if (!_iosHapticLabel) {
+      const label = document.createElement('label');
+      label.setAttribute('aria-hidden', 'true');
+      label.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.setAttribute('switch', '');
+      label.appendChild(input);
+      document.body.appendChild(label);
+      _iosHapticLabel = label;
+    }
+    _iosHapticLabel.click();
+  } catch {}
+}
 
 window.triggerHaptic = function (style = 'light') {
   try {
-    if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return;
     if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
-    const pattern = HAPTIC_PATTERNS[style] ?? HAPTIC_PATTERNS.light;
-    navigator.vibrate(pattern);
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      const pattern = HAPTIC_PATTERNS[style] ?? HAPTIC_PATTERNS.light;
+      navigator.vibrate(pattern);
+      return;
+    }
+    // iOS 17.4+ Safari / PWA Taptic Engine fallback
+    triggerIosSwitchHaptic();
   } catch {}
 };
 
