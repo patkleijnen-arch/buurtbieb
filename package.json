@@ -1,0 +1,19 @@
+{
+  "name": "buurtbieb-nl",
+  "version": "1.0.0",
+  "description": "BuurtBieb.nl — Landelijk netwerk van online en fysieke mini-biebs (Web-App & PWA)",
+  "private": true,
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev": "npx serve . -l 3000"
+  },
+  "keywords": [
+    "buurtbieb",
+    "minibieb",
+    "zwerfboek",
+    "pwa",
+    "supabase",
+    "openlibrary"
+  ],
+  "license": "MIT"
+}

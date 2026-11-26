@@ -1,0 +1,46 @@
+{
+  "id": "./",
+  "name": "BuurtBieb.nl — Het Landelijke Netwerk van Mini-Biebs",
+  "short_name": "BuurtBieb",
+  "description": "Deel, leen en ruil boeken met buurtgenoten via online en fysieke mini-biebs in heel Nederland.",
+  "lang": "nl-NL",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAF6F0",
+  "theme_color": "#234233",
+  "categories": ["books", "lifestyle", "social"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

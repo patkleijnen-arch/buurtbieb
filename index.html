@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="nl" data-cabinet-theme="klassiek_hout">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#234233" />
+  <meta name="description" content="BuurtBieb.nl — Het landelijke netwerk van online en fysieke mini-biebs. Deel, leen of ruil boeken met buurtgenoten." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BuurtBieb" />
+  <title>BuurtBieb.nl — Landelijk Netwerk van Online & Fysieke Mini-Biebs</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+
+  <!-- Typografie: Lora (Warme Bibliotheek Serif) & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       BOVENSTE NAVIGATIEBALK (ALTIJD VAST IN BEELD)
+       ======================================================================== -->
+  <header class="top-navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button
+          type="button"
+          id="hamburgerMenuBtn"
+          class="hamburger-menu-btn"
+          onclick="toggleSideMenu()"
+          aria-label="Menu openen"
+          aria-expanded="false"
+          aria-controls="appSideMenu"
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <span id="hamburgerUnreadDot" class="hamburger-unread-dot" style="display:none;"></span>
+        </button>
+
+        <a href="#plank" class="brand-logo" onclick="navigateFromMenu('plank', 'kast'); return false;">
+          <img src="assets/icons/icon.svg" alt="BuurtBieb.nl Logo" />
+          <div>
+            <span class="brand-title">BuurtBieb.nl</span>
+            <span class="brand-subtitle">Online &amp; Fysieke Mini-Biebs</span>
+          </div>
+        </a>
+      </div>
+
+      <div id="userStatusContainer" class="user-status-bar"></div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       UITSCHUIFBAAR ZIJMENU (3 HORIZONTALE STREEPJES LINKSBOVEN)
+       ======================================================================== -->
+  <div id="appSideMenuBackdrop" class="side-menu-backdrop" onclick="closeSideMenu()" aria-hidden="true"></div>
+  <aside id="appSideMenu" class="side-menu-drawer" role="dialog" aria-modal="true" aria-label="Hoofdmenu" aria-hidden="true">
+    <div class="side-menu-header">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <img src="assets/icons/icon.svg" alt="BuurtBieb.nl" style="width:32px; height:32px; border-radius:8px;" />
+        <div>
+          <strong style="font-family:'Lora', Georgia, serif; font-size:1.05rem; color:var(--accent-green); display:block; line-height:1.1;">BuurtBieb.nl</strong>
+          <span style="font-size:0.72rem; color:var(--text-muted);">Menu</span>
+        </div>
+      </div>
+      <button type="button" class="side-menu-close-btn" onclick="closeSideMenu()" aria-label="Menu sluiten">✕</button>
+    </div>
+
+    <nav class="side-menu-body" aria-label="Zijmenu navigatie">
+      <div class="side-menu-section-title">Ontdekken</div>
+      <button type="button" class="side-menu-item active" data-menu-key="plank:kast" onclick="navigateFromMenu('plank', 'kast')">
+        <span class="side-menu-icon">📚</span>
+        <span>Buurtboekenkast</span>
+      </button>
+      <button type="button" class="side-menu-item" data-menu-key="plank:kaart" onclick="navigateFromMenu('plank', 'kaart')">
+        <span class="side-menu-icon">🗺️</span>
+        <span>MiniBieb Kaart</span>
+      </button>
+      <button type="button" class="side-menu-item" data-menu-key="marktplaats" onclick="navigateFromMenu('marktplaats')">
+        <span class="side-menu-icon">🛍️</span>
+        <span>Boekenbeurs</span>
+      </button>
+      <button type="button" class="side-menu-item" data-menu-key="plank:gezocht" onclick="navigateFromMenu('plank', 'gezocht')">
+        <span class="side-menu-icon">🔎</span>
+        <span>Boek Gezocht</span>
+      </button>
+
+      <div class="side-menu-section-title">Delen &amp; Contact</div>
+      <button type="button" class="side-menu-item" data-menu-key="toevoegen" onclick="navigateFromMenu('toevoegen')">
+        <span class="side-menu-icon">➕</span>
+        <span>Boek aanbieden</span>
+      </button>
+      <button type="button" class="side-menu-item" data-menu-key="chat" onclick="navigateFromMenu('chat')">
+        <span class="side-menu-icon">💬</span>
+        <span style="flex:1; text-align:left;">BuurtChat</span>
+        <span id="navUnreadChatBadge" class="unread-counter-pill" style="display:none;">0</span>
+      </button>
+
+      <div class="side-menu-section-title">Mijn Account &amp; Hulp</div>
+      <button type="button" class="side-menu-item" data-menu-key="profiel" onclick="navigateFromMenu('profiel')">
+        <span class="side-menu-icon">🏡</span>
+        <span>Mijn Bieb</span>
+      </button>
+      <button type="button" class="side-menu-item" onclick="closeSideMenu(); openWelcomeGuideModal();">
+        <span class="side-menu-icon">ℹ️</span>
+        <span>Hoe werkt BuurtBieb?</span>
+      </button>
+      <button type="button" class="side-menu-item" onclick="closeSideMenu(); toggleLanguage();">
+        <span class="side-menu-icon">🌐</span>
+        <span>Taal: NL / EN</span>
+      </button>
+      <button type="button" class="side-menu-item" onclick="closeSideMenu(); handleInstallPwaClick();">
+        <span class="side-menu-icon">📲</span>
+        <span>App installeren</span>
+      </button>
+      <button type="button" id="sideMenuSignOutBtn" class="side-menu-item" style="display:none; color:#B91C1C;" onclick="closeSideMenu(); handleSignOut();">
+        <span class="side-menu-icon">🚪</span>
+        <span>Uitloggen</span>
+      </button>
+    </nav>
+
+    <div class="side-menu-footer">
+      <button type="button" class="side-menu-version-btn" onclick="handleSecretVersionTap(event)">
+        BuurtBieb.nl · v1.0
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       HOOFDINHOUD
+       ======================================================================== -->
+  <main class="main-container">
+
+    <!-- Secundaire statusbalk -->
+    <div id="secretTestModeBanner" class="credit-guard-banner" style="display:none;"></div>
+
+    <!-- PWA Installatie Prompt Balk -->
+    <div id="pwaInstallBanner" class="credit-guard-banner" style="display:none;"></div>
+
+    <!-- Onboarding Status Balk -->
+    <div id="onboardingBanner" class="credit-guard-banner" style="display:none;"></div>
+
+    <!-- ======================================================================
+         TAB 1: DE BOEKENKAST & BUURTPLANKEN (STANDAARD)
+         ====================================================================== -->
+    <section id="view-plank" class="tab-view-section">
+      <!-- Hero Sectie -->
+      <div class="hero-card">
+        <div class="hero-content">
+          <div class="hero-eyebrow">🌿 Landelijk Mini-Bieb Netwerk · 100% Buurtgedreven</div>
+          <h1>Deel, leen en laat boeken zwerven door jouw buurt</h1>
+          <p>
+            Ontdek welke boeken er nú bij buren en in fysieke MiniBiebs in jouw wijk staan — direct afgesproken via de BuurtChat.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-cream" onclick="switchTab('toevoegen')">
+              📷 Scan ISBN &amp; Zet Boek op je Plank
+            </button>
+            <button id="heroSecondaryActionBtn" class="btn btn-outline-cream" onclick="switchTab('marktplaats')">
+              🛍️ Bekijk de Boekenbeurs
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-showcase-box">
+          <div style="font-size:0.8rem; font-weight:700; color:#FDE68A; letter-spacing:0.03em; text-transform:uppercase;">
+            🏡 Hoe werkt het?
+          </div>
+          <div style="font-size:0.84rem; color:rgba(250,246,240,0.94); display:grid; gap:0.42rem;">
+            <div>🟢 <strong>Zwerfboek:</strong> Gratis houden, ruilen of doorgeven</div>
+            <div>🔵 <strong>Leenboek:</strong> Lokaal lenen van je buur</div>
+            <div>🟡 <strong>Koopboek:</strong> Klein prijsje (t/m € 5,-)</div>
+            <div>🟣 <strong>Boekenbeurs:</strong> Nieuwere &amp; duurdere boeken (&gt; € 5,-)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overzichtelijke sub-navigatie voor Ontdekken -->
+      <div class="discover-subnav" role="tablist" aria-label="Ontdekken weergave">
+        <button type="button" class="discover-sub-btn active" data-discover-sub="kast" onclick="switchDiscoverSubView('kast')">
+          📚 Boekenkast
+        </button>
+        <button type="button" class="discover-sub-btn" data-discover-sub="kaart" onclick="switchDiscoverSubView('kaart')">
+          🗺️ MiniBieb Kaart
+        </button>
+        <button type="button" class="discover-sub-btn" data-discover-sub="gezocht" onclick="switchDiscoverSubView('gezocht')">
+          🔎 Boek Gezocht
+        </button>
+      </div>
+
+      <!-- SUB-WEERGAVE 1: BOEKENKAST + DUIDELIJKE BOEKEN-ZOEKBALK -->
+      <div id="discoverPaneKast">
+        <div class="filter-panel">
+          <div class="filter-panel-heading">
+            <h2 class="serif-heading filter-panel-title">🔎 Boeken zoeken in jouw buurt</h2>
+            <p class="filter-panel-subtitle">Typ een titel, auteur, ISBN of postcode en druk op <strong>Zoek boeken</strong> om direct door de buurtboekenkast te zoeken.</p>
+          </div>
+          <form class="filter-primary-row" onsubmit="handleBookSearchSubmit(event)">
+            <input
+              type="search"
+              id="searchBooksInput"
+              class="input-field"
+              placeholder="🔍 Zoek een boek op titel, auteur of ISBN..."
+              aria-label="Zoek een boek op titel, auteur of ISBN"
+              oninput="handleSearchAndFilterChange()"
+            />
+            <input
+              type="text"
+              id="postalFilterInput"
+              class="input-field"
+              placeholder="📍 Postcode / plaats"
+              aria-label="Filter op postcode of woonplaats"
+              oninput="handleSearchAndFilterChange()"
+            />
+            <button type="submit" id="searchBooksSubmitBtn" class="btn btn-primary filter-search-submit-btn">
+              🔍 Zoek boeken
+            </button>
+            <button type="button" id="toggleExtraFiltersBtn" class="btn btn-outline" onclick="toggleExtraShelfFilters()" aria-expanded="false">
+              ⚙️ Meer filters
+            </button>
+            <button type="button" class="btn btn-outline" onclick="resetAllShelfFilters()">
+              Wis
+            </button>
+          </form>
+
+          <!-- Ingeklapt paneel met extra filters -->
+          <div id="extraShelfFiltersPanel" class="extra-filters-drawer" style="display:none;">
+            <div class="filter-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+              <div>
+                <select id="genreFilterSelect" class="select-field" onchange="handleSearchAndFilterChange(true)">
+                  <option value="alle">📂 Alle Boekgenres (16)</option>
+                  <option value="Literatuur & Roman">📖 Literatuur &amp; Roman</option>
+                  <option value="Spanning & Thriller">🔪 Spanning &amp; Thriller</option>
+                  <option value="Detective & Misdaad">🔍 Detective &amp; Misdaad</option>
+                  <option value="Fantasy & Sciencefiction">🚀 Fantasy &amp; Sciencefiction</option>
+                  <option value="Feelgood & Romantiek">💕 Feelgood &amp; Romantiek</option>
+                  <option value="Geschiedenis & Politiek">🏛️ Geschiedenis &amp; Politiek</option>
+                  <option value="Psychologie & Filosofie">🧠 Psychologie &amp; Filosofie</option>
+                  <option value="Persoonlijke Ontwikkeling & Gezondheid">🌱 Persoonlijke Ontwikkeling &amp; Gezondheid</option>
+                  <option value="Biografie & Waargebeurd">🌍 Biografie &amp; Waargebeurd</option>
+                  <option value="Wetenschap, Natuur & Techniek">🔬 Wetenschap, Natuur &amp; Techniek</option>
+                  <option value="Kookboek, Eten & Lifestyle">🍳 Kookboek, Eten &amp; Lifestyle</option>
+                  <option value="Reizen, Cultuur & Taal">✈️ Reizen, Cultuur &amp; Taal</option>
+                  <option value="Kunst, Design & Fotografie">🎨 Kunst, Design &amp; Fotografie</option>
+                  <option value="Studie-, Vak- & Managementboek">🎓 Studie-, Vak- &amp; Managementboek</option>
+                  <option value="Kinder-, Jeugd- & Young Adult">🧸 Kinder-, Jeugd- &amp; Young Adult</option>
+                  <option value="Stripboek, Graphic Novel & Poëzie">💬 Stripboek, Graphic Novel &amp; Poëzie</option>
+                  <option value="Engelse Boeken">🇬🇧 Engelse Boeken (English)</option>
+                  <option value="Internationale Boeken">🌍 Internationale Boeken (Andere taal)</option>
+                </select>
+              </div>
+              <div>
+                <select id="shelfDistanceSelect" class="select-field" onchange="handleSearchAndFilterChange(true)">
+                  <option value="alle">🌍 Afstand: Heel Nederland</option>
+                  <option value="5">📍 Binnen 5 km</option>
+                  <option value="15">📍 Binnen 15 km</option>
+                  <option value="25">📍 Binnen 25 km</option>
+                  <option value="50">📍 Binnen 50 km</option>
+                </select>
+              </div>
+              <div>
+                <select id="shelfSortSelect" class="select-field" onchange="handleSearchAndFilterChange(true)">
+                  <option value="dichtbij">📍 Dichtst bij postcode eerst</option>
+                  <option value="nieuwste">🆕 Nieuwste eerst</option>
+                  <option value="titel">🔤 Titel (A → Z)</option>
+                  <option value="prijs_laag" id="shelfSortPriceOption" style="display:none;" disabled>💶 Prijs (Laag → Hoog)</option>
+                </select>
+              </div>
+              <div>
+                <select id="shelfPageSizeSelect" class="select-field" onchange="handlePageSizeChange(this.value)">
+                  <option value="6" selected>📚 2 Planken (6 boeken)</option>
+                  <option value="9">📚 3 Planken (9 boeken)</option>
+                  <option value="12">📚 3 Brede Planken (12 boeken)</option>
+                </select>
+              </div>
+            </div>
+            <div class="sticker-pills" style="margin-top:0.65rem;">
+              <button type="button" class="sticker-filter-btn active" data-lang-filter="alle" onclick="setLanguageBookFilter('alle')">
+                🌐 Alle talen
+              </button>
+              <button type="button" class="sticker-filter-btn" data-lang-filter="nl" onclick="setLanguageBookFilter('nl')">
+                🇳🇱 Nederlands
+              </button>
+              <button type="button" class="sticker-filter-btn" data-lang-filter="en" onclick="setLanguageBookFilter('en')">
+                🇬🇧 Engels
+              </button>
+              <button type="button" class="sticker-filter-btn" data-lang-filter="other" onclick="setLanguageBookFilter('other')">
+                🌍 Overig
+              </button>
+            </div>
+          </div>
+
+          <div class="sticker-legend-row">
+            <div class="sticker-pills">
+              <button type="button" class="sticker-filter-btn active" data-sticker-filter="alle" onclick="setStickerFilter('alle')">
+                📚 Alle
+              </button>
+              <button type="button" class="sticker-filter-btn" data-sticker-filter="zwerfboek" onclick="setStickerFilter('zwerfboek')">
+                🟢 Zwerfboek
+              </button>
+              <button type="button" class="sticker-filter-btn" data-sticker-filter="leenboek" onclick="setStickerFilter('leenboek')">
+                🔵 Leenboek
+              </button>
+              <button type="button" class="sticker-filter-btn" data-sticker-filter="koopboek" onclick="setStickerFilter('koopboek')">
+                🟡 Koopboek
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visuele Houten Boekenkast -->
+        <div class="wood-cabinet-wrapper">
+          <div class="cabinet-roof-header">
+            <div class="cabinet-placard">
+              <span style="font-size:1.35rem;">🏡</span>
+              <div>
+                <h2 id="activeThemeTitle">📚 Buurtboekenkast</h2>
+                <span style="font-size:0.75rem; opacity:0.85;">Klik op een boek om details te zien of contact op te nemen</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="woodenCabinetContent" class="cabinet-interior"></div>
+        </div>
+      </div>
+
+      <!-- SUB-WEERGAVE 2: LANDKAART & OVERZICHT FYSIEKE MINIBIEB-KASTJES -->
+      <div id="physicalMiniBiebsSection" class="section-card" style="display:none;"></div>
+
+      <!-- Verborgen container voor taalsectie-compatibiliteit (taalfilter zit nu in Meer filters) -->
+      <div id="internationalBooksSection" class="section-card" style="display:none;"></div>
+
+      <!-- SUB-WEERGAVE 3: BOEK GEZOCHT IN DE BUURT -->
+      <div id="wantedBooksSection" class="section-card" style="display:none;">
+        <div class="section-header-flex" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
+          <div>
+            <span class="sticker-badge sticker-leenboek">📌 Buurt-Oproepjes</span>
+            <h2 class="serif-heading" style="font-size:1.35rem; margin-top:0.2rem;">🔎 Gezocht in de Buurt — Wie heeft dit boek in de kast staan?</h2>
+            <p style="font-size:0.86rem; color:var(--text-muted);">
+              Staat het boek dat je zoekt nog niet op een plank? Plaats hier een oproepje zodat een buurtgenoot die het thuis in de kast heeft kan reageren!
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="toggleWantedBookForm()">
+            + 🔎 Zelf een gezocht boek plaatsen
+          </button>
+        </div>
+
+        <!-- Formulier om een gezocht boek op het prikbord te zetten -->
+        <form id="wantedBookFormBox" onsubmit="handleWantedBookSubmit(event)" style="display:none; background:var(--bg-paper); border:1.5px solid var(--accent-green); border-radius:12px; padding:1.1rem; margin-bottom:1.15rem;">
+          <div style="font-weight:700; color:var(--accent-green); margin-bottom:0.65rem;">
+            🔎 Welk boek zoek je in jouw buurt?
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group" style="margin-bottom:0.65rem;">
+              <label class="form-label">Titel van het gezochte boek *</label>
+              <input type="text" id="wantedTitleInput" class="input-field" style="background:#FFF;" placeholder="Bijv. De zeven zussen" required />
+            </div>
+            <div class="form-group" style="margin-bottom:0.65rem;">
+              <label class="form-label">Auteur (optioneel)</label>
+              <input type="text" id="wantedAuthorInput" class="input-field" style="background:#FFF;" placeholder="Bijv. Lucinda Riley" />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group" style="margin-bottom:0.65rem;">
+              <label class="form-label">Hoe wil je het boek graag lenen/overnemen?</label>
+              <select id="wantedPreferModeSelect" class="select-field" style="background:#FFF;">
+                <option value="lenen_of_ruilen">🔵/🟢 Graag lenen of 1-op-1 ruilen</option>
+                <option value="alleen_lenen">🔵 Graag lenen (ik breng 'm netjes terug)</option>
+                <option value="overnemen_of_kopen">🟢/🟡 Graag overnemen of voor een klein prijsje kopen</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0.65rem;">
+              <label class="form-label">Korte toelichting voor je buren (optioneel)</label>
+              <input type="text" id="wantedNoteInput" class="input-field" style="background:#FFF;" placeholder="Bijv. voor vakantie of boekenclub" />
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleWantedBookForm()">Annuleren</button>
+            <button type="submit" class="btn btn-primary btn-sm">📌 Oproepje plaatsen in mijn buurt</button>
+          </div>
+        </form>
+
+        <div id="wantedBooksListContainer" class="wanted-books-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:0.85rem;"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 1B: BOEKENBEURS (VOOR NIEUWERE & DUURDERE BOEKEN > € 5,-)
+         ====================================================================== -->
+    <section id="view-marktplaats" class="tab-view-section" style="display:none;">
+      <div class="section-card" style="background: linear-gradient(135deg, #FFFDF9 0%, #F7EFFA 100%); border-color:#D8B4E2;">
+        <div class="section-header-flex" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="max-width:720px;">
+            <span class="sticker-badge sticker-marktplaats">🟣 Boekenbeurs</span>
+            <h2 class="serif-heading" style="font-size:1.65rem; margin-top:0.35rem;">Nieuwere, Gebonden &amp; Bijzondere Boeken</h2>
+            <p style="color:var(--text-muted); font-size:0.92rem; margin-top:0.25rem;">
+              Voor recente bestsellers, kookboeken, studieboeken en luxe hardcovers boven de € 5,-.
+              Koop rechtstreeks van buurtgenoten of doe een net tegenbod via de BuurtChat!
+            </p>
+          </div>
+          <button class="btn btn-primary" onclick="switchTab('toevoegen'); selectStickerInForm('marktplaats');">
+            ➕ Zet jouw Boek op de Boekenbeurs
+          </button>
+        </div>
+
+        <div class="filter-grid" style="margin-top:1.2rem;">
+          <div>
+            <input
+              type="search"
+              id="mpSearchInput"
+              class="input-field"
+              style="background:#FFF;"
+              placeholder="🔍 Zoek op titel of auteur..."
+              oninput="renderMarketplaceView()"
+            />
+          </div>
+          <div>
+            <select id="mpCategorySelect" class="select-field" style="background:#FFF;" onchange="renderMarketplaceView()">
+              <option value="alle">📂 Alle Boekgenres (16)</option>
+              <option value="Literatuur & Roman">📖 Literatuur &amp; Roman</option>
+              <option value="Spanning & Thriller">🔪 Spanning &amp; Thriller</option>
+              <option value="Detective & Misdaad">🔍 Detective &amp; Misdaad</option>
+              <option value="Fantasy & Sciencefiction">🚀 Fantasy &amp; Sciencefiction</option>
+              <option value="Feelgood & Romantiek">💕 Feelgood &amp; Romantiek</option>
+              <option value="Geschiedenis & Politiek">🏛️ Geschiedenis &amp; Politiek</option>
+              <option value="Psychologie & Filosofie">🧠 Psychologie &amp; Filosofie</option>
+              <option value="Persoonlijke Ontwikkeling & Gezondheid">🌱 Persoonlijke Ontwikkeling &amp; Gezondheid</option>
+              <option value="Biografie & Waargebeurd">🌍 Biografie &amp; Waargebeurd</option>
+              <option value="Wetenschap, Natuur & Techniek">🔬 Wetenschap, Natuur &amp; Techniek</option>
+              <option value="Kookboek, Eten & Lifestyle">🍳 Kookboek, Eten &amp; Lifestyle</option>
+              <option value="Reizen, Cultuur & Taal">✈️ Reizen, Cultuur &amp; Taal</option>
+              <option value="Kunst, Design & Fotografie">🎨 Kunst, Design &amp; Fotografie</option>
+              <option value="Studie-, Vak- & Managementboek">🎓 Studie-, Vak- &amp; Managementboek</option>
+              <option value="Kinder-, Jeugd- & Young Adult">🧸 Kinder-, Jeugd- &amp; Young Adult</option>
+              <option value="Stripboek, Graphic Novel & Poëzie">💬 Stripboek, Graphic Novel &amp; Poëzie</option>
+              <option value="Engelse Boeken">🇬🇧 Engelse Boeken (English)</option>
+              <option value="Internationale Boeken">🌍 Internationale Boeken (Andere taal)</option>
+            </select>
+          </div>
+          <div>
+            <select id="mpConditionSelect" class="select-field" style="background:#FFF;" onchange="renderMarketplaceView()">
+              <option value="alle">✨ Alle Condities</option>
+              <option value="als_nieuw">✨ Als nieuw (Cadeauwaardig)</option>
+              <option value="goed">👍 Goed (Netjes gelezen)</option>
+              <option value="gelezen">📖 Gelezen (Gebruikssporen)</option>
+            </select>
+          </div>
+          <div>
+            <select id="mpDistanceSelect" class="select-field" style="background:#FFF;" onchange="AppState.mpVisibleCount=6; renderMarketplaceView()">
+              <option value="alle">🌍 Heel Nederland</option>
+              <option value="5">📍 Binnen 5 km</option>
+              <option value="15">📍 Binnen 15 km</option>
+              <option value="25">📍 Binnen 25 km</option>
+              <option value="50">📍 Binnen 50 km</option>
+            </select>
+          </div>
+          <div>
+            <select id="mpSortSelect" class="select-field" style="background:#FFF;" onchange="AppState.mpVisibleCount=6; renderMarketplaceView()">
+              <option value="prijs_laag">💶 Prijs: Laag → Hoog</option>
+              <option value="prijs_hoog">💶 Prijs: Hoog → Laag</option>
+              <option value="dichtbij">📍 Dichtst bij mijn postcode</option>
+              <option value="nieuwste">🆕 Nieuwste eerst</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="marketplaceGridContainer" class="marketplace-grid"></div>
+      <div id="marketplaceLoadMoreBar" style="text-align:center; margin-top:1.1rem;"></div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 2: BOEKEN TOEVOEGEN & DE STICKERS + BOEKEN-MARKTPLAATS
+         ====================================================================== -->
+    <section id="view-toevoegen" class="tab-view-section" style="display:none;">
+      <div class="section-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
+          <div>
+            <span class="sticker-badge sticker-zwerfboek">Snel toevoegen via ISBN</span>
+            <h2 class="serif-heading" style="font-size:1.55rem; margin-top:0.25rem;">Boek Toevoegen aan jouw Boekenplank</h2>
+            <p style="color:var(--text-muted); font-size:0.92rem;">
+              Scan of typ een ISBN-nummer óf zoek direct op boektitel / auteur om gegevens en kaft automatisch op te halen.
+            </p>
+          </div>
+        </div>
+
+        <!-- STAP 1: ISBN / TITEL ZOEKEN & CAMERA-SCANNER -->
+        <div style="background:var(--bg-paper); border:1.5px solid var(--border-warm); border-radius:12px; padding:1.1rem; margin-bottom:1.25rem;">
+          <label class="form-label" for="isbnInput" style="margin-bottom:0.5rem;">📷 Stap 1: Zoek op ISBN, titel of auteur</label>
+          <div class="isbn-action-row" style="display:flex; gap:0.65rem; flex-wrap:wrap;">
+            <input
+              type="text"
+              id="isbnInput"
+              class="input-field"
+              style="flex:1; min-width:220px; background:#FFF;"
+              placeholder="ISBN, titel of auteur..."
+              onkeydown="if(event.key==='Enter'){event.preventDefault(); handleIsbnLookup();}"
+            />
+            <button type="button" class="btn btn-primary" onclick="handleIsbnLookup()">
+              🔎 Zoek boek
+            </button>
+            <button type="button" class="btn btn-outline" onclick="toggleCameraBarcodeScanner()">
+              📷 Scanner
+            </button>
+          </div>
+
+          <!-- Camera Video Stream Box -->
+          <div id="cameraScannerContainer" style="display:none; margin-top:0.85rem; background:#000; border-radius:10px; padding:0.75rem; text-align:center;">
+            <video id="barcodeVideo" autoplay playsinline style="max-width:100%; max-height:240px; border-radius:8px;"></video>
+            <div style="color:#FFF; font-size:0.8rem; margin-top:0.4rem;">Richt je camera op de ISBN-streepjescode achterop het boek...</div>
+          </div>
+
+          <div id="isbnLookupStatus" style="margin-top:0.6rem; font-size:0.86rem;"></div>
+          <div id="batchScanListContainer" style="display:none; margin-top:0.75rem; background:#ECFDF5; border:1px solid #10B981; border-radius:10px; padding:0.75rem;"></div>
+        </div>
+
+        <!-- STAP 2: BOEKGEGEVENS & STICKER -->
+        <form id="addBookForm" onsubmit="handleAddBookSubmit(event)">
+          <div style="display:flex; gap:1.25rem; flex-wrap:wrap; margin-bottom:1.15rem; align-items:flex-start;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.45rem;">
+              <div id="addBookCoverPreview" class="book-cover-3d" style="width:96px; height:142px;">
+                <span>📚<br>Kaft preview</span>
+              </div>
+              <input type="file" id="bookCoverPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleBookCoverPhotoUpload(event)" />
+              <button type="button" class="btn btn-outline btn-sm" style="font-size:0.75rem; padding:0.35rem 0.55rem;" onclick="document.getElementById('bookCoverPhotoInput').click()" title="Maak of kies zelf een foto van de boekkaft">
+                📷 Foto kaft
+              </button>
+            </div>
+            <div style="flex:1; min-width:240px;">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="bookTitleInput">Titel van het boek *</label>
+                  <input type="text" id="bookTitleInput" class="input-field" placeholder="Bijv. De meeste mensen deugen" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bookAuthorInput">Auteur *</label>
+                  <input type="text" id="bookAuthorInput" class="input-field" placeholder="Bijv. Rutger Bregman" required />
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="bookDescInput">Korte samenvatting of staat van het boek (optioneel)</label>
+                <input type="text" id="bookDescInput" class="input-field" placeholder="Korte toelichting..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- STAP 3: KIES DE STICKER OF BOEKENBEURS -->
+          <div class="form-group">
+            <label class="form-label">🏷️ Stap 2: Kies één van de 3 Stickers óf plaats op de Boekenbeurs *</label>
+            <div class="sticker-selector-grid">
+              <div class="sticker-option-card selected" data-sticker="zwerfboek" onclick="selectStickerInForm('zwerfboek')">
+                <div class="sticker-badge sticker-zwerfboek">🟢 Zwerfboek (Gratis)</div>
+                <div style="font-weight:700; font-size:0.92rem; margin-bottom:0.25rem;">Houden, ruilen of doorgeven</div>
+                <p style="font-size:0.8rem; color:var(--text-muted);">
+                  Gratis over te nemen of te ruilen in goed overleg. De lezer mag het boek houden of weer laten verder zwerven door de buurt.
+                </p>
+              </div>
+
+              <div class="sticker-option-card" data-sticker="leenboek" onclick="selectStickerInForm('leenboek')">
+                <div class="sticker-badge sticker-leenboek">🔵 Leenboek (Terugbrengen)</div>
+                <div style="font-weight:700; font-size:0.92rem; margin-bottom:0.25rem;">Alleen voor buurtgenoten</div>
+                <p style="font-size:0.8rem; color:var(--text-muted);">
+                  Moet na lezen terug. Alleen zichtbaar voor buurtgenoten om in goed overleg te lenen en na het lezen weer terug te brengen.
+                </p>
+              </div>
+
+              <div class="sticker-option-card" data-sticker="koopboek" onclick="selectStickerInForm('koopboek')">
+                <div class="sticker-badge sticker-koopboek">🟡 Koopboek (t/m € 5,-)</div>
+                <div style="font-weight:700; font-size:0.92rem; margin-bottom:0.25rem;">Klein buurtprijsje</div>
+                <p style="font-size:0.8rem; color:var(--text-muted);">
+                  Klein bedrag (max € 5,00). Onderling af te rekenen via Tikkie of contant.
+                </p>
+              </div>
+
+              <div class="sticker-option-card" data-sticker="marktplaats" onclick="selectStickerInForm('marktplaats')">
+                <div class="sticker-badge sticker-marktplaats">🟣 Boekenbeurs (&gt; € 5,-)</div>
+                <div style="font-weight:700; font-size:0.92rem; margin-bottom:0.25rem;">Nieuwere &amp; duurdere boeken (€ 5,50 – € 150)</div>
+                <p style="font-size:0.8rem; color:var(--text-muted);">
+                  Voor recente bestsellers, kookboeken, studieboeken en hardcovers. Inclusief staat van het boek en optie om bieden toe te staan.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Koopboek Prijs (max € 5,-) -->
+          <div id="koopboekPriceRow" style="display:none; background:#FFF8E1; border:1px solid #FCD34D; border-radius:10px; padding:1rem; margin-bottom:1rem;">
+            <label class="form-label">🟡 Vraagprijs voor dit Koopboek (maximaal € 5,00)</label>
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <input type="number" id="bookPriceInput" class="input-field" style="max-width:140px; background:#FFF;" min="0.50" max="5.00" step="0.50" value="2.50" />
+              <span style="font-size:0.84rem; color:#92400E;">Rechtstreeks onderling via Tikkie of contant.</span>
+            </div>
+          </div>
+
+          <!-- Boekenbeurs Instellingen (> € 5,- t/m € 150,-) -->
+          <div id="marktplaatsOptionsRow" style="display:none; background:#F8F0FA; border:1.5px solid #C48FD6; border-radius:12px; padding:1.15rem; margin-bottom:1rem;">
+            <div style="font-weight:800; color:#5B216E; margin-bottom:0.75rem;">
+              🟣 Boekenbeurs Details (Voor nieuwere &amp; duurdere boeken)
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group" style="margin-bottom:0.5rem;">
+                <label class="form-label">Vraagprijs in € (€ 5,50 t/m € 150,-) *</label>
+                <input type="number" id="mpPriceInput" class="input-field" style="background:#FFF;" min="5.50" max="150.00" step="0.50" value="15.00" />
+              </div>
+              <div class="form-group" style="margin-bottom:0.5rem;">
+                <label class="form-label">Conditie / Staat van het boek *</label>
+                <select id="mpConditionInput" class="select-field" style="background:#FFF;">
+                  <option value="als_nieuw">✨ Als nieuw (Geen gebruikssporen / cadeauwaardig)</option>
+                  <option value="goed">👍 Goed (Netjes gelezen)</option>
+                  <option value="gelezen">📖 Gelezen (Lichte gebruikssporen)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0.5rem; grid-column: 1 / -1;">
+                <label style="display:flex; align-items:center; gap:0.55rem; cursor:pointer; font-size:0.88rem; margin-top:0.25rem;">
+                  <input type="checkbox" id="mpAllowBiddingCheckbox" checked style="width:18px; height:18px; accent-color:#5B216E;" />
+                  <span><strong>Tegenbod via BuurtChat toestaan</strong> (Bieden welkom)</span>
+                </label>
+              </div>
+            </div>
+            <div style="font-size:0.78rem; color:#5B216E; margin-top:0.35rem;">
+              💡 Tip voor duurdere boeken: overhandig het boek 1-op-1 op afspraak aan de deur of verzend het per post.
+            </div>
+          </div>
+
+          <!-- Leenboek Buurt-melding -->
+          <div id="leenboekNeighborNotice" style="display:none; background:#E3F2FD; border:1px solid #64B5F6; border-radius:10px; padding:0.85rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#0D47A1;">
+            🔵 <strong>Let op:</strong> Een Leenboek wordt alleen getoond aan buurtgenoten in jouw postcodegebied/woonplaats om in goed overleg te lenen en weer terug te brengen.
+          </div>
+
+          <!-- UITKLAPBARE MEER OPTIES (Genre, taal, kaft-URL, overdracht, borg & snel-scan) -->
+          <details class="more-options-box" style="margin-top:1rem;">
+            <summary>⚙️ Meer opties (Genre, taal, verzending, borg &amp; snel-scan)</summary>
+            <div style="padding-top:0.9rem;">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="bookGenreInput">Boekgenre / Categorie</label>
+                  <select id="bookGenreInput" class="select-field" required>
+                    <option value="Literatuur & Roman">📖 Literatuur &amp; Roman</option>
+                    <option value="Spanning & Thriller">🔪 Spanning &amp; Thriller</option>
+                    <option value="Detective & Misdaad">🔍 Detective &amp; Misdaad</option>
+                    <option value="Fantasy & Sciencefiction">🚀 Fantasy &amp; Sciencefiction</option>
+                    <option value="Feelgood & Romantiek">💕 Feelgood &amp; Romantiek</option>
+                    <option value="Geschiedenis & Politiek">🏛️ Geschiedenis &amp; Politiek</option>
+                    <option value="Psychologie & Filosofie">🧠 Psychologie &amp; Filosofie</option>
+                    <option value="Persoonlijke Ontwikkeling & Gezondheid">🌱 Persoonlijke Ontwikkeling &amp; Gezondheid</option>
+                    <option value="Biografie & Waargebeurd">🌍 Biografie &amp; Waargebeurd</option>
+                    <option value="Wetenschap, Natuur & Techniek">🔬 Wetenschap, Natuur &amp; Techniek</option>
+                    <option value="Kookboek, Eten & Lifestyle">🍳 Kookboek, Eten &amp; Lifestyle</option>
+                    <option value="Reizen, Cultuur & Taal">✈️ Reizen, Cultuur &amp; Taal</option>
+                    <option value="Kunst, Design & Fotografie">🎨 Kunst, Design &amp; Fotografie</option>
+                    <option value="Studie-, Vak- & Managementboek">🎓 Studie-, Vak- &amp; Managementboek</option>
+                    <option value="Kinder-, Jeugd- & Young Adult">🧸 Kinder-, Jeugd- &amp; Young Adult</option>
+                    <option value="Stripboek, Graphic Novel & Poëzie">💬 Stripboek, Graphic Novel &amp; Poëzie</option>
+                    <option value="Engelse Boeken">🇬🇧 Engelse Boeken (English)</option>
+                    <option value="Internationale Boeken">🌍 Internationale Boeken (Andere taal)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bookLanguageInput">🌐 Taal van het boek</label>
+                  <select id="bookLanguageInput" class="select-field" required>
+                    <option value="nl">🇳🇱 Nederlands</option>
+                    <option value="en">🇬🇧 Engels / English</option>
+                    <option value="other:Duits">🌍 Internationaal — Duits</option>
+                    <option value="other:Frans">🌍 Internationaal — Frans</option>
+                    <option value="other:Spaans">🌍 Internationaal — Spaans</option>
+                    <option value="other:Italiaans">🌍 Internationaal — Italiaans</option>
+                    <option value="other:Andere taal">🌍 Internationaal — Andere taal (niet NL/EN)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="bookCoverInput">Kaft-URL (optioneel, of gebruik de foto-knop hierboven)</label>
+                <input type="text" id="bookCoverInput" class="input-field" placeholder="https://covers.openlibrary.org/..." oninput="updateCoverPreview(this.value, document.getElementById('bookTitleInput').value)" />
+              </div>
+
+              <div class="form-grid-2" style="margin-top:0.5rem;">
+                <div style="background:var(--bg-cream); border:1px solid var(--border-warm); border-radius:10px; padding:0.9rem;">
+                  <label id="step3PlacementLabel" class="form-label">📦 Overdracht &amp; locatie</label>
+                  <div id="placementModeToggleRow" class="responsive-grid-2" style="display:none; grid-template-columns:1fr 1fr; gap:0.55rem; margin-top:0.4rem; margin-bottom:0.75rem; padding-bottom:0.65rem; border-bottom:1px dashed var(--border-warm);">
+                    <label class="sticker-option-card" id="placementCardIndoor" style="cursor:pointer; padding:0.65rem;" onclick="handleBookPlacementModeChange('binnenplank')">
+                      <input type="radio" name="bookPlacementMode" id="placementRadioIndoor" value="binnenplank" checked onchange="handleBookPlacementModeChange('binnenplank')" />
+                      <strong>📚 Binnen op Plank</strong>
+                    </label>
+                    <label class="sticker-option-card" id="placementCardMiniBieb" style="cursor:pointer; padding:0.65rem;" onclick="handleBookPlacementModeChange('minibieb')">
+                      <input type="radio" name="bookPlacementMode" id="placementRadioMiniBieb" value="minibieb" onchange="handleBookPlacementModeChange('minibieb')" />
+                      <strong>🏡 In fysieke MiniBieb</strong>
+                    </label>
+                  </div>
+
+                  <div id="indoorHandoverOptionsBox" style="margin-top:0.35rem;">
+                    <label style="display:flex; align-items:center; gap:0.55rem; cursor:pointer; font-size:0.86rem;">
+                      <input type="checkbox" id="pickupCheckbox" checked style="width:18px; height:18px; accent-color:var(--accent-green);" />
+                      <span><strong>🚪 1-op-1 ophalen op afspraak</strong></span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.55rem; margin-top:0.45rem; cursor:pointer; font-size:0.86rem;">
+                      <input type="checkbox" id="shippingCheckbox" style="width:18px; height:18px; accent-color:var(--accent-green);" />
+                      <span><strong>✉️ Verzenden per post mogelijk</strong></span>
+                    </label>
+                  </div>
+                  <input type="checkbox" id="selfServiceCheckbox" style="display:none;" />
+                  <div id="selfServiceFormHint" class="form-hint" style="margin-top:0.45rem;"></div>
+                </div>
+
+                <div style="background:var(--bg-cream); border:1px solid var(--border-warm); border-radius:10px; padding:0.9rem;">
+                  <label class="form-label" for="depositTypeSelect">🔐 Onderlinge borg (Optioneel)</label>
+                  <select id="depositTypeSelect" class="select-field" style="background:#FFF;" onchange="handleDepositTypeChange(this.value)">
+                    <option value="geen">Geen extra onderlinge borg</option>
+                    <option value="bedrag">Onderlinge borg (€ 5 tot € 20)</option>
+                    <option value="onderpand_boek">Onderpand-boek (1-op-1 tijdelijk ruilboek)</option>
+                  </select>
+
+                  <div id="depositAmountContainer" style="display:none; margin-top:0.75rem;">
+                    <label class="form-label" style="font-size:0.8rem;">
+                      Borgbedrag: <strong>€ <span id="depositAmountValueLabel">10</span>,-</strong>
+                    </label>
+                    <input
+                      type="range"
+                      id="depositAmountRange"
+                      min="5"
+                      max="20"
+                      step="5"
+                      value="10"
+                      style="width:100%; accent-color:var(--accent-green);"
+                      oninput="document.getElementById('depositAmountValueLabel').textContent = this.value"
+                    />
+                  </div>
+
+                  <div style="margin-top:0.85rem; padding-top:0.75rem; border-top:1px dashed var(--border-warm);">
+                    <label style="display:inline-flex; align-items:center; gap:0.45rem; font-size:0.82rem; font-weight:700; color:var(--accent-green); cursor:pointer;">
+                      <input type="checkbox" id="quickBatchScanCheckbox" style="width:16px; height:16px; accent-color:var(--accent-green);" onchange="handleQuickBatchScanToggle(this.checked)" />
+                      <span>⚡ Snel-Scan modus (meerdere boeken achter elkaar)</span>
+                    </label>
+                    <select id="quickBatchTargetSelect" class="select-field" style="display:none; margin-top:0.45rem; background:#FFF;">
+                      <option value="minibieb">🏡 In fysieke MiniBieb leggen</option>
+                      <option value="binnenplank">📚 Binnen op Digitale Plank zetten</option>
+                    </select>
+                    <p id="quickBatchScanHintText" style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem;"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <div class="form-submit-row" style="margin-top:1.35rem; display:flex; justify-content:flex-end; gap:0.75rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline" onclick="switchTab('plank')">Annuleren</button>
+            <button type="submit" class="btn btn-primary">
+              📚 Plaats Boek op mijn Boekenplank
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 2B: IN-APP BUURTCHAT (WHATSAPP WEERGAVE)
+         ====================================================================== -->
+    <section id="view-chat" class="tab-view-section" style="display:none;">
+      <div id="chatTabContent"></div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 3: MIJN BIEB, THEMA & PROFIEL
+         ====================================================================== -->
+    <section id="view-profiel" class="tab-view-section" style="display:none;">
+      <div id="profileTabContent"></div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1: BOEK DETAILS & OVERDRACHT
+       ======================================================================== -->
+  <div id="bookDetailModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Boekdetails" onclick="if(event.target===this) closeBookDetailModal()">
+    <div class="modal-dialog">
+      <button type="button" class="modal-close-btn" onclick="closeBookDetailModal()" aria-label="Sluiten">✕</button>
+      <div id="bookDetailModalBody"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: INLOGGEN OF ACCOUNT AANMAKEN (GEBRUIKERSNAAM + WACHTWOORD & GOOGLE)
+       ======================================================================== -->
+  <div id="authModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" onclick="if(event.target===this) closeAuthModal()">
+    <div class="modal-dialog" style="max-width:460px;">
+      <button type="button" class="modal-close-btn" onclick="closeAuthModal()" aria-label="Sluiten">✕</button>
+      <div style="text-align:center; margin-bottom:1.1rem;">
+        <img src="assets/icons/icon.svg" alt="BuurtBieb" style="width:56px; height:56px; border-radius:14px; margin-bottom:0.5rem;" />
+        <h2 class="serif-heading" style="font-size:1.45rem;" id="authModalTitle">Inloggen bij BuurtBieb.nl</h2>
+        <p style="font-size:0.86rem; color:var(--text-muted);" id="authModalSubtitle">
+          Log in of maak direct een account aan met gebruikersnaam en wachtwoord of Google.
+        </p>
+      </div>
+
+      <!-- Kies Inloggen of Account aanmaken -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; margin-bottom:1rem; background:var(--bg-cream); padding:0.3rem; border-radius:10px; border:1px solid var(--border-warm);">
+        <button type="button" id="authTabLoginBtn" class="btn btn-primary btn-sm" style="justify-content:center;" onclick="switchAuthModalMode('login')">
+          🔑 Inloggen
+        </button>
+        <button type="button" id="authTabRegisterBtn" class="btn btn-outline btn-sm" style="justify-content:center; border:none;" onclick="switchAuthModalMode('register')">
+          ✨ Account aanmaken
+        </button>
+      </div>
+
+      <!-- Gebruikersnaam + Wachtwoord Formulier -->
+      <form onsubmit="handleUserPasswordAuthSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="authUsernameInput">Gebruikersnaam</label>
+          <input type="text" id="authUsernameInput" class="input-field" placeholder="Kies of typ je gebruikersnaam" minlength="2" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="authPasswordInput">Wachtwoord</label>
+          <input type="password" id="authPasswordInput" class="input-field" placeholder="Minimaal 8 tekens" minlength="8" autocomplete="current-password" required />
+        </div>
+        <button type="submit" id="authSubmitBtn" class="btn btn-primary" style="width:100%;">
+          🔑 Inloggen
+        </button>
+      </form>
+
+      <div style="text-align:center; font-size:0.78rem; color:var(--text-muted); margin:0.95rem 0;">
+        — of —
+      </div>
+
+      <!-- Google Login Knop -->
+      <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.75rem; font-weight:700;" onclick="handleGoogleLogin()">
+        <span>🌐</span> Doorgaan met Google Account
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: EERSTE AANMELDING (ONBOARDING: BOEKENPLANK OF MINIBIEB, POSTCODE, THEMA)
+       ======================================================================== -->
+  <div id="onboardingModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="onboardingModalTitle" onclick="if(event.target===this) closeOnboardingModal()">
+    <div class="modal-dialog" style="max-width:560px;">
+      <button type="button" class="modal-close-btn" onclick="closeOnboardingModal()" aria-label="Sluiten">✕</button>
+      <div style="margin-bottom:1rem;">
+        <span class="sticker-badge sticker-zwerfboek">Eerste Aanmelding</span>
+        <h2 id="onboardingModalTitle" class="serif-heading" style="font-size:1.45rem; margin-top:0.3rem;">Richt jouw Boekenplank of MiniBieb in</h2>
+        <p style="font-size:0.86rem; color:var(--text-muted);">
+          Ingelogd als <strong id="onboardingEmailBadge">jouw e-mailadres</strong>. Je hebt <strong>géén fysieke minibieb nodig</strong> om mee te doen; je kunt gewoon boeken delen vanaf je eigen boekenplank thuis.
+        </p>
+      </div>
+
+      <form onsubmit="handleOnboardingSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Hoe deel jij jouw boeken? *</label>
+          <div class="responsive-grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+            <label class="sticker-option-card" style="cursor:pointer; padding:0.7rem;">
+              <input type="radio" name="onbHasBox" value="false" checked onchange="document.getElementById('onbBiebName').placeholder = 'Bijv. Boekenplank van Sanne'" />
+              <strong>📚 Vanuit Huis (Boekenplank)</strong>
+              <div style="font-size:0.74rem; color:var(--text-muted); margin-top:0.15rem;">
+                Geen minibieb aan de straat nodig. Buren halen op afspraak op of per post.
+              </div>
+            </label>
+            <label class="sticker-option-card" style="cursor:pointer; padding:0.7rem;">
+              <input type="radio" name="onbHasBox" value="true" onchange="document.getElementById('onbBiebName').placeholder = 'Bijv. MiniBieb De Groene Beuk'" />
+              <strong>🏡 Fysieke MiniBieb</strong>
+              <div style="font-size:0.74rem; color:var(--text-muted); margin-top:0.15rem;">
+                Ik heb een echte minibieb aan de straat waar buren vrij boeken uit kunnen pakken.
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Jouw naam of naam van je boekenplank / MiniBieb *</label>
+          <input type="text" id="onbBiebName" class="input-field" placeholder="Bijv. Boekenplank van Sanne" required />
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Postcode (4 cijfers) *</label>
+            <input type="text" id="onbPostal4" class="input-field" placeholder="Bijv. 3512" maxlength="4" pattern="[1-9][0-9]{3}" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Woonplaats *</label>
+            <input type="text" id="onbCity" class="input-field" placeholder="Bijv. Utrecht" required />
+          </div>
+        </div>
+
+        <div class="modal-actions-row" style="display:flex; gap:0.55rem; flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="handleSignOut()">
+            🚪 Uitloggen
+          </button>
+          <button type="button" class="btn btn-outline" style="flex:1; color:#B91C1C; border-color:#FCA5A5;" onclick="handleDeleteAccount()">
+            🗑️ Account verwijderen
+          </button>
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeOnboardingModal()">
+            ✕ Sluiten
+          </button>
+          <button type="submit" class="btn btn-primary" style="flex:2;">
+            📚 Profiel Opslaan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MOBIELE PWA ONDERBALK
+       ======================================================================== -->
+  <nav class="mobile-bottom-nav" aria-label="Mobiele navigatie">
+    <button class="mobile-nav-btn active" data-tab-target="plank" onclick="switchTab('plank')">
+      <span style="font-size:1.05rem;">📚</span>
+      <span>Ontdek</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab-target="marktplaats" onclick="switchTab('marktplaats')">
+      <span style="font-size:1.05rem;">🛍️</span>
+      <span>Beurs</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab-target="toevoegen" onclick="switchTab('toevoegen')">
+      <span style="font-size:1.05rem;">➕</span>
+      <span>Nieuw</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab-target="chat" onclick="switchTab('chat')" style="position:relative;">
+      <span style="font-size:1.05rem;">💬</span>
+      <span>Chat</span>
+      <span id="mobUnreadChatBadge" class="unread-counter-pill" style="display:none; position:absolute; top:2px; right:4px;">0</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab-target="profiel" onclick="switchTab('profiel')">
+      <span style="font-size:1.05rem;">🏡</span>
+      <span>Profiel</span>
+    </button>
+  </nav>
+
+  <!-- Welkom & Uitleg Menu (verschijnt bij eerste opstarten, daarna altijd in het ☰ menu) -->
+  <div id="welcomeGuideModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcomeGuideTitle" onclick="if(event.target===this) closeWelcomeGuideModal()">
+    <div class="modal-dialog welcome-guide-dialog">
+      <button type="button" class="modal-close-btn" onclick="closeWelcomeGuideModal()" aria-label="Sluiten">✕</button>
+      <div class="welcome-guide-hero">
+        <img src="assets/icons/icon.svg" alt="BuurtBieb.nl" class="welcome-guide-logo" />
+        <div>
+          <span class="welcome-guide-eyebrow">Welkom bij BuurtBieb.nl</span>
+          <h2 id="welcomeGuideTitle" class="serif-heading" style="margin:0.15rem 0 0; font-size:1.38rem;">Zo werkt jouw buurtboekenkast</h2>
+        </div>
+      </div>
+
+      <p class="welcome-guide-intro">
+        Deel, leen, ruil of ontdek boeken bij buren en fysieke MiniBiebs in jouw omgeving — helemaal zonder gedoe.
+      </p>
+
+      <div class="welcome-guide-steps">
+        <div class="welcome-guide-step">
+          <div class="welcome-guide-step-icon">📚</div>
+          <div>
+            <strong>1. Ontdek boeken in de buurt</strong>
+            <p>Blader door de Buurtboekenkast, bekijk de MiniBieb Kaart of de Boekenbeurs en filter op postcode of afstand.</p>
+          </div>
+        </div>
+        <div class="welcome-guide-step">
+          <div class="welcome-guide-step-icon">➕</div>
+          <div>
+            <strong>2. Bied zelf een boek aan</strong>
+            <p>Scan een ISBN-barcode of zoek op titel — de kaft en info worden automatisch ingevuld. Kies uit Zwerfboek, Leenboek of Koopboek.</p>
+          </div>
+        </div>
+        <div class="welcome-guide-step">
+          <div class="welcome-guide-step-icon">💬</div>
+          <div>
+            <strong>3. Spreek veilig af via BuurtChat</strong>
+            <p>Zie je een mooi boek? Stuur direct een berichtje in de app, zonder je telefoonnummer of e-mailadres te delen.</p>
+          </div>
+        </div>
+        <div class="welcome-guide-step">
+          <div class="welcome-guide-step-icon">☰</div>
+          <div>
+            <strong>4. Alles overzichtelijk in het menu linksboven</strong>
+            <p>Via de 3 streepjes linksboven vind je alle onderdelen, je eigen bieb en kun je deze uitleg later altijd teruglezen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-guide-footer">
+        <button type="button" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="closeWelcomeGuideModal()">
+          🚀 Begrepen, aan de slag!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-App Waarschuwing & Bevestiging Dialoog (vervangt browser alert/confirm) -->
+  <div id="appDialogModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle" onclick="if(event.target===this) closeAppDialog(false)">
+    <div class="modal-dialog" style="max-width:440px; padding:1.75rem 1.5rem 1.45rem;">
+      <button type="button" class="modal-close-btn" onclick="closeAppDialog(false)" aria-label="Sluiten">✕</button>
+      <div style="display:flex; align-items:flex-start; gap:0.75rem; margin-bottom:0.85rem;">
+        <div id="appDialogIcon" style="font-size:1.65rem; line-height:1; flex-shrink:0;">ℹ️</div>
+        <div>
+          <h3 id="appDialogTitle" class="serif-heading" style="font-size:1.2rem; margin:0 0 0.35rem;">Melding</h3>
+          <p id="appDialogMessage" style="font-size:0.9rem; color:var(--text-main); line-height:1.5; margin:0; white-space:pre-line;"></p>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:0.55rem; flex-wrap:wrap; margin-top:1.15rem;">
+        <button type="button" id="appDialogCancelBtn" class="btn btn-outline btn-sm" onclick="closeAppDialog(false)" style="display:none;">
+          Annuleren
+        </button>
+        <button type="button" id="appDialogConfirmBtn" class="btn btn-primary btn-sm" onclick="closeAppDialog(true)">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Meldingen -->
+  <div id="toastContainer" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+  <script src="js/seedData.js"></script>
+  <script src="js/isbnService.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
