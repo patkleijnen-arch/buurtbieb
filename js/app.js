@@ -768,7 +768,27 @@ window.handleBookCoverLoad = function (imgEl) {
   }
 };
 
+// Subtiele mobiele haptic feedback (trilfeedback op ondersteunde toestellen zoals Android PWA)
+const HAPTIC_PATTERNS = {
+  light: 10,
+  medium: 18,
+  success: [12, 35, 18],
+  warning: [24, 40, 24]
+};
+
+window.triggerHaptic = function (style = 'light') {
+  try {
+    if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return;
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    const pattern = HAPTIC_PATTERNS[style] ?? HAPTIC_PATTERNS.light;
+    navigator.vibrate(pattern);
+  } catch {}
+};
+
 function showToast(message) {
+  window.triggerHaptic('success');
   const container = document.getElementById('toastContainer');
   if (!container) return;
   const el = document.createElement('div');
@@ -4507,6 +4527,7 @@ window.handleSendChatMessage = function (event, convId) {
   event.preventDefault();
   const inputEl = document.getElementById('chatMessageInput');
   if (!inputEl || !inputEl.value.trim()) return;
+  window.triggerHaptic('medium');
 
   // Pas bij het daadwerkelijk versturen van het eerste bericht wordt het boek aangevraagd/gereserveerd
   const pending = AppState.pendingReservation;
@@ -5033,6 +5054,7 @@ window.showAppConfirm = function (message, options = {}) {
   if (!modal) {
     return Promise.resolve(false);
   }
+  window.triggerHaptic(options.danger ? 'warning' : 'light');
   const titleEl = document.getElementById('appDialogTitle');
   const iconEl = document.getElementById('appDialogIcon');
   const msgEl = document.getElementById('appDialogMessage');
@@ -5582,6 +5604,12 @@ function handleDelegatedAction(targetEl, event) {
 }
 
 document.addEventListener('click', (e) => {
+  const interactiveEl = e.target?.closest
+    ? e.target.closest('button, [role="button"], .book-on-shelf-card, .side-menu-item, .mobile-nav-btn, .sticker-filter-btn, .discover-sub-btn')
+    : null;
+  if (interactiveEl && !interactiveEl.disabled) {
+    window.triggerHaptic('light');
+  }
   handleDelegatedAction(e.target, e);
 });
 
