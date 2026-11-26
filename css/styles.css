@@ -3216,3 +3216,11 @@ h1, h2, h3, .serif-heading {
   padding: 0.28rem 0.65rem;
   font-size: 0.78rem;
 }
+
+.cabinet-roof-header {
+  padding: 0.7rem 1.15rem;
+}
+
+.cabinet-placard {
+  padding: 0.35rem 0.85rem;
+}
