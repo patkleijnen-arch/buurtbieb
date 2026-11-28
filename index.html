@@ -21,7 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="css/styles.css?v=64" />
+  <link rel="stylesheet" href="css/styles.css?v=65" />
 </head>
 <body>
 
@@ -798,11 +798,11 @@
         </button>
       </div>
 
-      <!-- Gebruikersnaam + Wachtwoord Formulier -->
+      <!-- E-mailadres + Wachtwoord Formulier -->
       <form onsubmit="handleUserPasswordAuthSubmit(event)">
         <div class="form-group">
-          <label class="form-label" for="authUsernameInput">Gebruikersnaam</label>
-          <input type="text" id="authUsernameInput" class="input-field" placeholder="Gebruikersnaam" minlength="2" autocomplete="username" required />
+          <label class="form-label" for="authUsernameInput">E-mailadres</label>
+          <input type="email" id="authUsernameInput" class="input-field" placeholder="naam@voorbeeld.nl" autocomplete="email" required />
         </div>
         <div class="form-group">
           <label class="form-label" for="authPasswordInput">Wachtwoord</label>
@@ -1005,7 +1005,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
   <script src="js/seedData.js"></script>
   <script src="js/isbnService.js"></script>
-  <script src="js/supabaseClient.js?v=64"></script>
-  <script src="js/app.js?v=64"></script>
+  <script src="js/supabaseClient.js?v=65"></script>
+  <script src="js/app.js?v=65"></script>
 </body>
 </html>

@@ -488,6 +488,8 @@ const UI_EN_RAW_PAIRS = [
   ['🟢 Zwerfboek · gratis', '🟢 Roaming · free'],
   ['🔵 Leenboek · terugbrengen', '🔵 Loan · return after reading'],
   ['🟡 Koopboek · t/m € 5,-', '🟡 Budget Buy · up to €5'],
+  ['E-mailadres', 'Email address'],
+  ['naam@voorbeeld.nl', 'name@example.com'],
   ['Chatmeldingen aanzetten', 'Enable chat alerts'],
   ['Chatmeldingen: Aan', 'Chat alerts: On'],
   ['📚 Alle types', '📚 All types'],
@@ -4999,6 +5001,17 @@ window.handleUserPasswordAuthSubmit = async function (event) {
       mode === 'register'
         ? await window.BuurtBiebDB.registerWithUsernamePassword({ username, password })
         : await window.BuurtBiebDB.loginWithUsernamePassword({ username, password });
+    if (res && res.mode === 'confirm_email') {
+      window.switchAuthModalMode('login');
+      showAppAlert(
+        tr(
+          `We hebben een bevestigingsmail gestuurd naar ${res.email}. Klik op de link in je mailbox om je account te activeren en log daarna in.`,
+          `We sent a confirmation email to ${res.email}. Click the link in your inbox to activate your account, then log in.`
+        ),
+        { title: tr('Bevestig je e-mailadres', 'Confirm your email'), icon: '📧' }
+      );
+      return;
+    }
     closeAuthModal();
     showToast(
       mode === 'register'
@@ -5006,6 +5019,9 @@ window.handleUserPasswordAuthSubmit = async function (event) {
         : `🔑 Welkom terug, ${res.profile.bieb_name}!`
     );
     refreshAllViews();
+    if (res && res.profile && res.profile.needsOnboarding) {
+      openOnboardingModal();
+    }
   } catch (err) {
     showAppAlert(err.message);
   }

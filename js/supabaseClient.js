@@ -961,6 +961,10 @@ class BuurtBiebDatabase {
     return `${base}${counter}`;
   }
 
+  isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+  }
+
   toAuthEmail(username) {
     const clean = String(username || '').trim().toLowerCase();
     if (clean.includes('@')) return clean;
@@ -969,23 +973,36 @@ class BuurtBiebDatabase {
   }
 
   async registerWithUsernamePassword({ username, password }) {
-    const cleanUsername = String(username || '').trim();
+    const cleanInput = String(username || '').trim();
     const rawPassword = String(password || '');
-    if (cleanUsername.length < 2) {
-      throw new Error('Kies een gebruikersnaam van minimaal 2 tekens.');
+    if (this.isLiveMode()) {
+      if (!this.isValidEmail(cleanInput)) {
+        throw new Error('Vul een geldig e-mailadres in.');
+      }
+    } else if (cleanInput.length < 2) {
+      throw new Error('Vul een geldig e-mailadres in.');
     }
     if (rawPassword.length < 8) {
       throw new Error('Kies een wachtwoord van minimaal 8 tekens.');
     }
 
-    const taken = await this.checkBiebNameTakenRemote(cleanUsername);
-    if (taken) {
-      throw new Error(
-        `De gebruikersnaam "${cleanUsername}" is al in gebruik. Kies een andere naam of log in met je wachtwoord.`
-      );
+    const authEmail = this.isLiveMode() ? cleanInput.toLowerCase() : this.toAuthEmail(cleanInput);
+    const defaultBiebName = cleanInput.includes('@')
+      ? cleanInput
+          .split('@')[0]
+          .replace(/[._-]+/g, ' ')
+          .trim()
+      : cleanInput;
+
+    if (!this.isLiveMode()) {
+      const taken = await this.checkBiebNameTakenRemote(cleanInput);
+      if (taken) {
+        throw new Error(
+          `Dit account (${cleanInput}) is al in gebruik. Log in met je wachtwoord.`
+        );
+      }
     }
 
-    const authEmail = this.toAuthEmail(cleanUsername);
     let userId = 'user-' + Date.now();
 
     if (this.isLiveMode()) {
@@ -993,19 +1010,32 @@ class BuurtBiebDatabase {
       if (!client || !client.auth) {
         throw new Error('Supabase Auth is momenteel niet beschikbaar. Probeer het later opnieuw.');
       }
+      const emailRedirectTo =
+        typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')
+          ? `${window.location.origin}${window.location.pathname}`
+          : undefined;
       const { data, error } = await client.auth.signUp({
         email: authEmail,
         password: rawPassword,
-        options: { data: { bieb_name: cleanUsername } }
+        options: {
+          ...(emailRedirectTo ? { emailRedirectTo } : {}),
+          data: { bieb_name: defaultBiebName }
+        }
       });
       if (error) {
+        if (/already registered|already exists/i.test(error.message || '')) {
+          throw new Error('Er bestaat al een account met dit e-mailadres. Probeer in te loggen.');
+        }
         throw new Error(error.message || 'Account aanmaken via Supabase Auth mislukt.');
       }
       if (!data || !data.user) {
         throw new Error('Account aanmaken mislukt.');
       }
       if (!data.session) {
-        throw new Error('Bevestig eerst je e-mailadres via de link in je inbox en log daarna in.');
+        return {
+          mode: 'confirm_email',
+          email: authEmail
+        };
       }
       userId = data.user.id;
       this.accessToken = data.session.access_token;
@@ -1016,7 +1046,7 @@ class BuurtBiebDatabase {
     const newProfile = {
       id: userId,
       email: authEmail,
-      bieb_name: cleanUsername,
+      bieb_name: defaultBiebName || 'BuurtBieb Lezer',
       ...(this.isLiveMode() ? {} : { password_hash: this.hashPassword(rawPassword) }),
       provider: 'password',
       has_physical_box: false,
@@ -1030,7 +1060,7 @@ class BuurtBiebDatabase {
       contact_methods: ['in_app_chat'],
       whatsapp_number: '',
       books_shared_count: 0,
-      needsOnboarding: false,
+      needsOnboarding: this.isLiveMode(),
       created_at: new Date().toISOString()
     };
 
@@ -1057,7 +1087,10 @@ class BuurtBiebDatabase {
     const cleanUsername = String(username || '').trim();
     const rawPassword = String(password || '');
     if (!cleanUsername) {
-      throw new Error('Vul je gebruikersnaam in.');
+      throw new Error('Vul je e-mailadres in.');
+    }
+    if (this.isLiveMode() && !this.isValidEmail(cleanUsername)) {
+      throw new Error('Vul een geldig e-mailadres in.');
     }
     if (!rawPassword) {
       throw new Error('Vul je wachtwoord in.');
@@ -1068,13 +1101,16 @@ class BuurtBiebDatabase {
       if (!client || !client.auth) {
         throw new Error('Supabase Auth is momenteel niet beschikbaar.');
       }
-      const authEmail = this.toAuthEmail(cleanUsername);
+      const authEmail = cleanUsername.toLowerCase();
       const { data, error } = await client.auth.signInWithPassword({
         email: authEmail,
         password: rawPassword
       });
       if (error || !data || !data.session || !data.user) {
-        throw new Error('Onjuiste gebruikersnaam of wachtwoord.');
+        if (error && /email not confirmed/i.test(error.message || '')) {
+          throw new Error('Bevestig eerst je e-mailadres via de link in je mailbox.');
+        }
+        throw new Error('Onjuist e-mailadres of wachtwoord.');
       }
       this.accessToken = data.session.access_token;
       this.authUserId = data.user.id;
