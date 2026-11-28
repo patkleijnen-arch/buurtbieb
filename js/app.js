@@ -2693,6 +2693,7 @@ window.setLanguageBookFilter = function (langFilter) {
   document.querySelectorAll('[data-lang-filter]').forEach((btn) => {
     btn.classList.toggle('active', btn.getAttribute('data-lang-filter') === AppState.filterBookLanguage);
   });
+  updateExtraFiltersBadge();
   renderBookshelfView();
 };
 
