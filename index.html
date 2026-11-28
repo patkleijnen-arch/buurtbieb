@@ -21,7 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="css/styles.css?v=61" />
+  <link rel="stylesheet" href="css/styles.css?v=62" />
 </head>
 <body>
 
@@ -115,6 +115,10 @@
       <button type="button" class="side-menu-item" onclick="closeSideMenu(); openWelcomeGuideModal();">
         <span class="side-menu-icon">ℹ️</span>
         <span>Hoe werkt BuurtBieb?</span>
+      </button>
+      <button type="button" id="sideMenuPushToggleBtn" class="side-menu-item" onclick="handleTogglePushNotifications()">
+        <span class="side-menu-icon">🔔</span>
+        <span id="sideMenuPushToggleLabel">Meldingen aanzetten</span>
       </button>
       <button type="button" class="side-menu-item" onclick="closeSideMenu(); toggleLanguage();">
         <span class="side-menu-icon">🌐</span>
@@ -1001,7 +1005,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
   <script src="js/seedData.js"></script>
   <script src="js/isbnService.js"></script>
-  <script src="js/supabaseClient.js"></script>
-  <script src="js/app.js?v=61"></script>
+  <script src="js/supabaseClient.js?v=62"></script>
+  <script src="js/app.js?v=62"></script>
 </body>
 </html>

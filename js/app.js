@@ -488,6 +488,8 @@ const UI_EN_RAW_PAIRS = [
   ['🟢 Zwerfboek · gratis', '🟢 Roaming · free'],
   ['🔵 Leenboek · terugbrengen', '🔵 Loan · return after reading'],
   ['🟡 Koopboek · t/m € 5,-', '🟡 Budget Buy · up to €5'],
+  ['Meldingen aanzetten', 'Enable notifications'],
+  ['Meldingen: Aan', 'Notifications: On'],
   ['📚 Alle types', '📚 All types'],
   ['📚 Alle', '📚 All'],
   ['📚 Buurtboekenkast', '📚 Neighborhood Bookshelf'],
@@ -5601,6 +5603,8 @@ function refreshAllViews() {
   renderPwaInstallBanner();
   renderOnboardingBanner();
   updateUnreadChatBadges();
+  updatePushNotificationMenuState();
+  syncExistingPushSubscriptionIfPermitted();
   const activeTab = AppState.activeTab || 'plank';
   if (activeTab === 'plank') renderBookshelfView();
   else if (activeTab === 'marktplaats') renderMarketplaceView();
@@ -5660,11 +5664,163 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============================================================================
+// WEB PUSH MELDINGEN (ANDROID & IOS PWA — OOK ALS APP GESLOTEN IS)
+// ============================================================================
+const WEB_PUSH_VAPID_PUBLIC_KEY =
+  'BDO5maJe5DtxBr5l_yAFLcGGDe9CRuF64fTtGHgRtvLOVbv9G4HZ1OqH9kah3uEgXp9OtSfYxeuUSlqcRtOsJFo';
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i += 1) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+async function getActivePushSubscription() {
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null;
+    const reg = await navigator.serviceWorker.ready;
+    if (!reg || !reg.pushManager) return null;
+    return await reg.pushManager.getSubscription();
+  } catch {
+    return null;
+  }
+}
+
+async function updatePushNotificationMenuState() {
+  const labelEl = document.getElementById('sideMenuPushToggleLabel');
+  if (!labelEl) return;
+  const sub = await getActivePushSubscription();
+  const enabled = Boolean(sub && typeof Notification !== 'undefined' && Notification.permission === 'granted');
+  labelEl.textContent = enabled ? tr('Meldingen: Aan', 'Notifications: On') : tr('Meldingen aanzetten', 'Enable notifications');
+}
+
+async function syncExistingPushSubscriptionIfPermitted() {
+  try {
+    const user = window.BuurtBiebDB.getCurrentUser();
+    if (!user || user.needsOnboarding || !window.BuurtBiebDB.isLiveMode()) return;
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    const sub = await getActivePushSubscription();
+    if (sub && typeof sub.toJSON === 'function') {
+      await window.BuurtBiebDB.savePushSubscription(sub.toJSON());
+    }
+  } catch {}
+}
+
+window.handleTogglePushNotifications = async function () {
+  window.closeSideMenu();
+  const user = window.BuurtBiebDB.getCurrentUser();
+  if (!user || user.needsOnboarding) {
+    showToast(tr('Log eerst in om telefoonmeldingen aan te zetten.', 'Log in first to enable notifications.'));
+    openAuthModal();
+    return;
+  }
+
+  const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent || '');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || typeof Notification === 'undefined') {
+    showAppAlert(
+      isIos
+        ? tr(
+            'Zet BuurtBieb eerst op je beginscherm (via Delen → Zet op beginscherm) om push-meldingen op je iPhone te ontvangen.',
+            'Add BuurtBieb to your Home Screen first (Share → Add to Home Screen) to receive push notifications on iPhone.'
+          )
+        : tr(
+            'Deze browser ondersteunt helaas geen push-meldingen.',
+            'This browser does not support push notifications.'
+          ),
+      { title: tr('Meldingen', 'Notifications'), icon: '🔔' }
+    );
+    return;
+  }
+
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const existingSub = await reg.pushManager.getSubscription();
+
+    if (existingSub) {
+      const endpoint = existingSub.endpoint;
+      await existingSub.unsubscribe();
+      await window.BuurtBiebDB.deletePushSubscription(endpoint);
+      await updatePushNotificationMenuState();
+      showToast(tr('🔕 Meldingen zijn uitgezet voor dit apparaat.', '🔕 Notifications disabled for this device.'));
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      showAppAlert(
+        tr(
+          'Meldingen staan geblokkeerd in je browser- of telefooninstellingen. Sta meldingen toe voor BuurtBieb om chatberichten te ontvangen.',
+          'Notifications are blocked in your browser or phone settings. Allow notifications for BuurtBieb to receive chat alerts.'
+        ),
+        { title: tr('Meldingen geblokkeerd', 'Notifications blocked'), icon: '🔕' }
+      );
+      return;
+    }
+
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(WEB_PUSH_VAPID_PUBLIC_KEY)
+    });
+
+    const saved = await window.BuurtBiebDB.savePushSubscription(sub.toJSON());
+    await updatePushNotificationMenuState();
+    if (saved) {
+      showToast(tr('🔔 Meldingen staan aan! Je krijgt nu een seintje bij nieuwe BuurtChat-berichten.', '🔔 Notifications enabled! You will now be alerted for new BuurtChat messages.'));
+    } else {
+      showToast(tr('🔔 Meldingen geactiveerd op dit apparaat.', '🔔 Notifications enabled on this device.'));
+    }
+  } catch (err) {
+    showAppAlert(
+      tr('Kon meldingen niet activeren: ', 'Could not enable notifications: ') + (err?.message || 'Onbekende fout'),
+      { title: tr('Meldingen', 'Notifications'), icon: '⚠️' }
+    );
+  }
+};
+
+// ============================================================================
 // INITIALISATIE & PWA SERVICE WORKER REGISTRATIE
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
   refreshAllViews();
   maybeShowWelcomeGuideOnStartup();
+  updatePushNotificationMenuState();
+  syncExistingPushSubscriptionIfPermitted();
+
+  // Open direct het juiste chatgesprek als de app via een push-melding is geopend
+  try {
+    const params = new URLSearchParams(window.location.search || '');
+    const openChatId = params.get('openChat');
+    if (openChatId || window.location.hash === '#chat') {
+      setTimeout(() => {
+        const u = window.BuurtBiebDB.getCurrentUser();
+        if (u && !u.needsOnboarding) {
+          if (openChatId) {
+            AppState.activeConversationId = openChatId;
+            AppState.chatViewMode = 'thread';
+          }
+          window.switchTab('chat');
+        }
+      }, 350);
+    }
+  } catch {}
+
+  if ('serviceWorker' in navigator && typeof navigator.serviceWorker.addEventListener === 'function') {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event?.data?.type === 'OPEN_CHAT_FROM_PUSH') {
+        const convId = event.data.conversationId;
+        if (convId) {
+          AppState.activeConversationId = convId;
+          AppState.chatViewMode = 'thread';
+        }
+        window.switchTab('chat');
+      }
+    });
+  }
 
   // Voorkom ongewenst pinch-zoomen op iOS Safari (behalve op de interactieve MiniBieb-kaart)
   document.addEventListener(

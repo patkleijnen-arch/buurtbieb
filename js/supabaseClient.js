@@ -2261,7 +2261,75 @@ class BuurtBiebDatabase {
       });
     }
 
+    if (!senderOverride && this.isLiveMode()) {
+      this.triggerChatPushNotification(convId, newMsg.body, senderName);
+    }
+
     return newMsg;
+  }
+
+  async savePushSubscription(subscriptionJson) {
+    if (!this.isLiveMode() || !this.accessToken || !this.authUserId) return false;
+    if (!subscriptionJson || !subscriptionJson.endpoint || !subscriptionJson.keys) return false;
+    try {
+      const row = {
+        user_id: this.authUserId,
+        endpoint: String(subscriptionJson.endpoint),
+        p256dh: String(subscriptionJson.keys.p256dh || ''),
+        auth: String(subscriptionJson.keys.auth || ''),
+        user_agent: (typeof navigator !== 'undefined' && navigator.userAgent ? navigator.userAgent : '').slice(0, 220),
+        updated_at: new Date().toISOString()
+      };
+      const res = await fetch(`${this.supabaseUrl}/rest/v1/push_subscriptions?on_conflict=user_id,endpoint`, {
+        method: 'POST',
+        headers: {
+          apikey: this.supabaseKey,
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+          Prefer: 'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify(row)
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  async deletePushSubscription(endpoint) {
+    if (!this.isLiveMode() || !this.accessToken || !this.authUserId || !endpoint) return false;
+    try {
+      const url = `${this.supabaseUrl}/rest/v1/push_subscriptions?user_id=eq.${encodeURIComponent(this.authUserId)}&endpoint=eq.${encodeURIComponent(endpoint)}`;
+      const res = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          apikey: this.supabaseKey,
+          Authorization: `Bearer ${this.accessToken}`
+        }
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  triggerChatPushNotification(convId, messageText, senderName) {
+    if (!this.isLiveMode() || !this.accessToken || !convId || !messageText) return;
+    try {
+      fetch(`${this.supabaseUrl}/functions/v1/send-chat-push`, {
+        method: 'POST',
+        headers: {
+          apikey: this.supabaseKey,
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          conversation_id: convId,
+          message_text: String(messageText).slice(0, 180),
+          sender_name: String(senderName || '').slice(0, 80)
+        })
+      }).catch(() => {});
+    } catch {}
   }
 }
 

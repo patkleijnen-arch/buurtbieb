@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buurtbieb-pwa-v61';
+const CACHE_NAME = 'buurtbieb-pwa-v62';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -59,5 +59,63 @@ self.addEventListener('fetch', (event) => {
         }
         return Response.error();
       })
+  );
+});
+
+// Web Push: ontvang binnenkomende BuurtChat-meldingen ook als de app gesloten is
+self.addEventListener('push', (event) => {
+  let payload = {
+    title: '💬 Nieuw BuurtChat-bericht',
+    body: 'Je hebt een nieuw bericht ontvangen op BuurtBieb.nl',
+    url: './#chat',
+    conversation_id: '',
+    tag: 'buurtbieb-chat'
+  };
+
+  if (event.data) {
+    try {
+      const parsed = event.data.json();
+      payload = { ...payload, ...parsed };
+    } catch {
+      const txt = event.data.text();
+      if (txt) payload.body = txt;
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: './assets/icons/icon-192.png',
+      badge: './assets/icons/icon-192.png',
+      tag: payload.tag || 'buurtbieb-chat',
+      renotify: true,
+      vibrate: [120, 60, 120],
+      data: {
+        url: payload.url || './#chat',
+        conversation_id: payload.conversation_id || ''
+      }
+    })
+  );
+});
+
+// Tikken op de melding opent direct het juiste BuurtChat-gesprek
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const data = event.notification.data || {};
+  const targetUrl = new URL(data.url || './#chat', self.registration.scope).href;
+  const convId = data.conversation_id || '';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.startsWith(self.registration.scope)) {
+          client.postMessage({ type: 'OPEN_CHAT_FROM_PUSH', conversationId: convId });
+          if ('focus' in client) return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+    })
   );
 });
