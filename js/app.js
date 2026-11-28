@@ -488,8 +488,9 @@ const UI_EN_RAW_PAIRS = [
   ['🟢 Zwerfboek · gratis', '🟢 Roaming · free'],
   ['🔵 Leenboek · terugbrengen', '🔵 Loan · return after reading'],
   ['🟡 Koopboek · t/m € 5,-', '🟡 Budget Buy · up to €5'],
-  ['Meldingen aanzetten', 'Enable notifications'],
-  ['Meldingen: Aan', 'Notifications: On'],
+  ['Chatmeldingen aanzetten', 'Enable chat alerts'],
+  ['Chatmeldingen: Aan', 'Chat alerts: On'],
+  ['Alleen bij berichten, geen reclame', 'Messages only, no ads'],
   ['📚 Alle types', '📚 All types'],
   ['📚 Alle', '📚 All'],
   ['📚 Buurtboekenkast', '📚 Neighborhood Bookshelf'],
@@ -5696,7 +5697,7 @@ async function updatePushNotificationMenuState() {
   if (!labelEl) return;
   const sub = await getActivePushSubscription();
   const enabled = Boolean(sub && typeof Notification !== 'undefined' && Notification.permission === 'granted');
-  labelEl.textContent = enabled ? tr('Meldingen: Aan', 'Notifications: On') : tr('Meldingen aanzetten', 'Enable notifications');
+  labelEl.textContent = enabled ? tr('Chatmeldingen: Aan', 'Chat alerts: On') : tr('Chatmeldingen aanzetten', 'Enable chat alerts');
 }
 
 async function syncExistingPushSubscriptionIfPermitted() {
