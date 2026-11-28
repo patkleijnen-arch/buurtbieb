@@ -490,7 +490,6 @@ const UI_EN_RAW_PAIRS = [
   ['🟡 Koopboek · t/m € 5,-', '🟡 Budget Buy · up to €5'],
   ['Chatmeldingen aanzetten', 'Enable chat alerts'],
   ['Chatmeldingen: Aan', 'Chat alerts: On'],
-  ['Alleen bij berichten, geen reclame', 'Messages only, no ads'],
   ['📚 Alle types', '📚 All types'],
   ['📚 Alle', '📚 All'],
   ['📚 Buurtboekenkast', '📚 Neighborhood Bookshelf'],
