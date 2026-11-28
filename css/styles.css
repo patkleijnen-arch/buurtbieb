@@ -100,11 +100,7 @@ html, body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-}
-
-body {
-  overflow-x: clip;
-  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Voorkom dat flex- en grid-kinderen buiten hun ouder-kader groeien zonder woorden af te kappen */
@@ -3230,23 +3226,11 @@ h1, h2, h3, .serif-heading {
 }
 
 /* ============================================================================
-   VASTE NATIVE-APP FEEL OP SMARTPHONE (GEEN ONGEWENST ZOOMEN, WEL VRIJ SCROLLEN)
+   VASTE NATIVE-APP FEEL OP SMARTPHONE (GEEN AUTO-ZOOM, WEL 100% VRIJ SCROLLEN)
    ============================================================================ */
 html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-}
-
-.chat-messages-area,
-.side-menu-body,
-.modal-dialog {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 820px) {
