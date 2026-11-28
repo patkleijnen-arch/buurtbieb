@@ -3166,6 +3166,26 @@ h1, h2, h3, .serif-heading {
 .hero-card.hero-card-compact p {
   font-size: 0.85rem;
   margin-bottom: 0;
+  max-width: 780px;
+}
+
+.hero-compact-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.hero-compact-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(250, 246, 240, 0.94);
+  background: rgba(250, 246, 240, 0.12);
+  border: 1px solid rgba(250, 246, 240, 0.22);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
 }
 
 .hero-card.hero-card-compact .hero-actions {

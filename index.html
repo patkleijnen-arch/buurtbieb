@@ -21,7 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="css/styles.css?v=60" />
+  <link rel="stylesheet" href="css/styles.css?v=61" />
 </head>
 <body>
 
@@ -155,21 +155,18 @@
          TAB 1: DE BOEKENKAST & BUURTPLANKEN (STANDAARD)
          ====================================================================== -->
     <section id="view-plank" class="tab-view-section">
-      <!-- Compacte Hero Balk -->
+      <!-- Compacte Hero Balk met korte uitleg -->
       <div class="hero-card hero-card-compact">
         <div class="hero-content">
           <h1>Deel, leen en laat boeken zwerven door jouw buurt</h1>
           <p>
-            Ontdek welke boeken er nú bij buren en in fysieke MiniBiebs in jouw wijk staan — direct afgesproken via BuurtChat.
+            Ontdek boeken bij buren en in fysieke MiniBiebs bij jou in de wijk. Leen of ruil gratis, koop voor een klein buurtprijsje en spreek veilig af via BuurtChat — zonder je nummer of e-mail te delen.
           </p>
-        </div>
-        <div class="hero-actions">
-          <button class="btn btn-cream btn-sm" onclick="switchTab('toevoegen')">
-            📷 Boek aanbieden
-          </button>
-          <button id="heroSecondaryActionBtn" class="btn btn-outline-cream btn-sm" onclick="switchTab('marktplaats')">
-            🛍️ Boekenbeurs
-          </button>
+          <div class="hero-compact-pills">
+            <span class="hero-compact-pill">🟢 Zwerfboek · gratis</span>
+            <span class="hero-compact-pill">🔵 Leenboek · terugbrengen</span>
+            <span class="hero-compact-pill">🟡 Koopboek · t/m € 5,-</span>
+          </div>
         </div>
       </div>
 
@@ -1005,6 +1002,6 @@
   <script src="js/seedData.js"></script>
   <script src="js/isbnService.js"></script>
   <script src="js/supabaseClient.js"></script>
-  <script src="js/app.js?v=60"></script>
+  <script src="js/app.js?v=61"></script>
 </body>
 </html>
