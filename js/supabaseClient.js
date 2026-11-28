@@ -306,8 +306,11 @@ class BuurtBiebDatabase {
         (existing && existing.bieb_name) ||
         metaName ||
         this.makeUniqueBiebNameFromEmail(email || 'Lezer');
+      const isIncompleteExisting = Boolean(
+        existing && existing.needsOnboarding && !existing.postal_code_4 && !existing.city
+      );
       const profile = existing
-        ? { ...existing, email: email || existing.email || '', needsOnboarding: false }
+        ? { ...existing, email: email || existing.email || '', needsOnboarding: isIncompleteExisting }
         : {
             id: authUser.id,
             email,
@@ -323,7 +326,7 @@ class BuurtBiebDatabase {
             contact_methods: ['in_app_chat'],
             whatsapp_number: '',
             books_shared_count: 0,
-            needsOnboarding: false,
+            needsOnboarding: true,
             created_at: new Date().toISOString()
           };
       if (!existing) {

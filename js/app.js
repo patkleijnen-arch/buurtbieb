@@ -5622,10 +5622,22 @@ window.resetAllShelfFilters = function () {
   setStickerFilter('alle');
 };
 
+let _onboardingAutoOpenedUserId = null;
+
 function refreshAllViews() {
   const currentUser = window.BuurtBiebDB.getCurrentUser();
   if (currentUser && !currentUser.needsOnboarding) {
     document.getElementById('onboardingModal')?.classList?.remove('open');
+    _onboardingAutoOpenedUserId = null;
+  } else if (currentUser && currentUser.needsOnboarding && _onboardingAutoOpenedUserId !== currentUser.id) {
+    _onboardingAutoOpenedUserId = currentUser.id;
+    document.getElementById('welcomeGuideModal')?.classList?.remove('open');
+    setTimeout(() => {
+      const latest = window.BuurtBiebDB.getCurrentUser();
+      if (latest && latest.needsOnboarding && typeof window.openOnboardingModal === 'function') {
+        window.openOnboardingModal();
+      }
+    }, 80);
   }
   applyStaticDomTranslations();
   renderHeaderStatus();
