@@ -5361,6 +5361,20 @@ window.handleDeleteAccount = async function () {
   );
   if (!confirmed) return;
 
+  try {
+    const activeSub = await getActivePushSubscription();
+    if (activeSub) {
+      await activeSub.unsubscribe().catch(() => {});
+    }
+  } catch {}
+
+  try {
+    await window.BuurtBiebDB.deleteCurrentAccountRemote();
+  } catch (err) {
+    showAppAlert(err?.message || tr('Kon account niet volledig op de server verwijderen. Probeer het opnieuw.', 'Could not fully delete account on server. Please try again.'));
+    return;
+  }
+
   window.BuurtBiebDB.deleteCurrentAccount();
   AppState.activeConversationId = null;
   AppState.isEditingProfile = false;

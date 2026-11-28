@@ -1,4 +1,4 @@
-const CACHE_NAME = 'buurtbieb-pwa-v65';
+const CACHE_NAME = 'buurtbieb-pwa-v66';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

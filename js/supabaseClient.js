@@ -1525,6 +1525,28 @@ class BuurtBiebDatabase {
     }
   }
 
+  async deleteCurrentAccountRemote() {
+    if (!this.isLiveMode() || !this.accessToken) return { ok: true, skipped: true };
+    try {
+      const res = await fetch(`${this.supabaseUrl}/functions/v1/delete-account`, {
+        method: 'POST',
+        headers: {
+          apikey: this.supabaseKey,
+          Authorization: `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Account verwijderen op server mislukt.');
+      }
+      return { ok: true };
+    } catch (err) {
+      throw err;
+    }
+  }
+
   deleteCurrentAccount() {
     const current = this.getCurrentUser();
     if (!current) return false;
