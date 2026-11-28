@@ -276,7 +276,16 @@ const UI_EN_RAW_PAIRS = [
   ['Inloggen bij BuurtBieb.nl', 'Log in to BuurtBieb.nl'],
   ['Log in of maak direct een account aan met gebruikersnaam en wachtwoord of Google.', 'Log in or create an account with username and password or Google.'],
   ['Gebruikersnaam', 'Username'],
-  ['Kies of typ je gebruikersnaam', 'Choose or enter your username'],
+  ['Log in met je account of ga verder met Google.', 'Sign in with your account or continue with Google.'],
+  ['Doorgaan met Google', 'Continue with Google'],
+  ['📂 Alle genres', '📂 All genres'],
+  ['Tik op een boek voor details', 'Tap a book for details'],
+  ['Samenvatting of staat (optioneel)', 'Summary or condition (optional)'],
+  ['🏷️ Stap 2: Type aanbod *', '🏷️ Step 2: Listing type *'],
+  ['Kaft-URL (optioneel)', 'Cover URL (optional)'],
+  ['Naam van je boekenplank of MiniBieb *', 'Name of your bookshelf or Little Library *'],
+  ['Zoek je een specifiek boek? Plaats een oproepje voor buurtgenoten.', 'Looking for a specific book? Post a request for neighbors.'],
+  ['Kies of typ je gebruikersnaam', 'Username'],
   ['Wachtwoord', 'Password'],
   ['Minimaal 8 tekens', 'Minimum 8 characters'],
   ['— of —', '— or —'],
@@ -1578,7 +1587,7 @@ function renderOnboardingBanner() {
     <div class="credit-guard-text">
       <span class="credit-guard-icon">📚</span>
       <div>
-        <strong>Welkom ${escapeHtml(user.email)}!</strong> Stel nog even je boekenplank-naam, postcode en thema in.
+        <strong>Welkom ${escapeHtml(user.email)}!</strong> Vul nog even je naam en postcode in.
       </div>
     </div>
     <button class="btn btn-primary btn-sm" onclick="openOnboardingModal()">Profiel afronden</button>

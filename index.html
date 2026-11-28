@@ -225,7 +225,7 @@
             <div class="filter-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
               <div>
                 <select id="genreFilterSelect" class="select-field" onchange="handleSearchAndFilterChange(true)">
-                  <option value="alle">📂 Alle Boekgenres (16)</option>
+                  <option value="alle">📂 Alle genres</option>
                   <option value="Literatuur & Roman">📖 Literatuur &amp; Roman</option>
                   <option value="Spanning & Thriller">🔪 Spanning &amp; Thriller</option>
                   <option value="Detective & Misdaad">🔍 Detective &amp; Misdaad</option>
@@ -311,7 +311,7 @@
             <div class="cabinet-placard">
               <div>
                 <h2 id="activeThemeTitle">📚 Buurtboekenkast</h2>
-                <span style="font-size:0.74rem; opacity:0.85;">Klik op een boek om details te zien of contact op te nemen</span>
+                <span style="font-size:0.74rem; opacity:0.85;">Tik op een boek voor details</span>
               </div>
             </div>
           </div>
@@ -331,9 +331,9 @@
         <div class="section-header-flex" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
           <div>
             <span class="sticker-badge sticker-leenboek">📌 Buurt-Oproepjes</span>
-            <h2 class="serif-heading" style="font-size:1.35rem; margin-top:0.2rem;">🔎 Gezocht in de Buurt — Wie heeft dit boek in de kast staan?</h2>
+            <h2 class="serif-heading" style="font-size:1.35rem; margin-top:0.2rem;">🔎 Boek Gezocht</h2>
             <p style="font-size:0.86rem; color:var(--text-muted);">
-              Staat het boek dat je zoekt nog niet op een plank? Plaats hier een oproepje zodat een buurtgenoot die het thuis in de kast heeft kan reageren!
+              Zoek je een specifiek boek? Plaats een oproepje voor buurtgenoten.
             </p>
           </div>
           <button type="button" class="btn btn-primary btn-sm" onclick="toggleWantedBookForm()">
@@ -412,7 +412,7 @@
           </div>
           <div>
             <select id="mpCategorySelect" class="select-field" style="background:#FFF;" onchange="renderMarketplaceView()">
-              <option value="alle">📂 Alle Boekgenres (16)</option>
+              <option value="alle">📂 Alle genres</option>
               <option value="Literatuur & Roman">📖 Literatuur &amp; Roman</option>
               <option value="Spanning & Thriller">🔪 Spanning &amp; Thriller</option>
               <option value="Detective & Misdaad">🔍 Detective &amp; Misdaad</option>
@@ -534,7 +534,7 @@
                 </div>
               </div>
               <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" for="bookDescInput">Korte samenvatting of staat van het boek (optioneel)</label>
+                <label class="form-label" for="bookDescInput">Samenvatting of staat (optioneel)</label>
                 <input type="text" id="bookDescInput" class="input-field" placeholder="Korte toelichting..." />
               </div>
             </div>
@@ -542,7 +542,7 @@
 
           <!-- STAP 3: KIES DE STICKER OF BOEKENBEURS -->
           <div class="form-group">
-            <label class="form-label">🏷️ Stap 2: Kies één van de 3 Stickers óf plaats op de Boekenbeurs *</label>
+            <label class="form-label">🏷️ Stap 2: Type aanbod *</label>
             <div class="sticker-selector-grid">
               <div class="sticker-option-card selected" data-sticker="zwerfboek" onclick="selectStickerInForm('zwerfboek')">
                 <div class="sticker-badge sticker-zwerfboek">🟢 Zwerfboek (Gratis)</div>
@@ -665,7 +665,7 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="bookCoverInput">Kaft-URL (optioneel, of gebruik de foto-knop hierboven)</label>
+                <label class="form-label" for="bookCoverInput">Kaft-URL (optioneel)</label>
                 <input type="text" id="bookCoverInput" class="input-field" placeholder="https://covers.openlibrary.org/..." oninput="updateCoverPreview(this.value, document.getElementById('bookTitleInput').value)" />
               </div>
 
@@ -783,7 +783,7 @@
         <img src="assets/icons/icon.svg" alt="BuurtBieb" style="width:56px; height:56px; border-radius:14px; margin-bottom:0.5rem;" />
         <h2 class="serif-heading" style="font-size:1.45rem;" id="authModalTitle">Inloggen bij BuurtBieb.nl</h2>
         <p style="font-size:0.86rem; color:var(--text-muted);" id="authModalSubtitle">
-          Log in of maak direct een account aan met gebruikersnaam en wachtwoord of Google.
+          Log in met je account of ga verder met Google.
         </p>
       </div>
 
@@ -801,7 +801,7 @@
       <form onsubmit="handleUserPasswordAuthSubmit(event)">
         <div class="form-group">
           <label class="form-label" for="authUsernameInput">Gebruikersnaam</label>
-          <input type="text" id="authUsernameInput" class="input-field" placeholder="Kies of typ je gebruikersnaam" minlength="2" autocomplete="username" required />
+          <input type="text" id="authUsernameInput" class="input-field" placeholder="Gebruikersnaam" minlength="2" autocomplete="username" required />
         </div>
         <div class="form-group">
           <label class="form-label" for="authPasswordInput">Wachtwoord</label>
@@ -818,7 +818,7 @@
 
       <!-- Google Login Knop -->
       <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:0.75rem; font-weight:700;" onclick="handleGoogleLogin()">
-        <span>🌐</span> Doorgaan met Google Account
+        <span>🌐</span> Doorgaan met Google
       </button>
     </div>
   </div>
@@ -833,7 +833,7 @@
         <span class="sticker-badge sticker-zwerfboek">Eerste Aanmelding</span>
         <h2 id="onboardingModalTitle" class="serif-heading" style="font-size:1.45rem; margin-top:0.3rem;">Richt jouw Boekenplank of MiniBieb in</h2>
         <p style="font-size:0.86rem; color:var(--text-muted);">
-          Ingelogd als <strong id="onboardingEmailBadge">jouw e-mailadres</strong>. Je hebt <strong>géén fysieke minibieb nodig</strong> om mee te doen; je kunt gewoon boeken delen vanaf je eigen boekenplank thuis.
+          Ingelogd als <strong id="onboardingEmailBadge">jouw account</strong>. Vul je gegevens in om te starten.
         </p>
       </div>
 
@@ -859,7 +859,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Jouw naam of naam van je boekenplank / MiniBieb *</label>
+          <label class="form-label">Naam van je boekenplank of MiniBieb *</label>
           <input type="text" id="onbBiebName" class="input-field" placeholder="Bijv. Boekenplank van Sanne" required />
         </div>
 
