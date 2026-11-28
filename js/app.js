@@ -484,6 +484,7 @@ const UI_EN_RAW_PAIRS = [
   ['🌐 Alle talen', '🌐 All languages'],
   ['🇬🇧 Engels', '🇬🇧 English'],
   ['🌍 Overig', '🌍 Other'],
+  ['📚 Alle types', '📚 All types'],
   ['📚 Alle', '📚 All'],
   ['📚 Buurtboekenkast', '📚 Neighborhood Bookshelf'],
   ['Klik op een boek om details te zien of contact op te nemen', 'Click a book to view details or get in touch'],
@@ -2303,7 +2304,8 @@ function updateExtraFiltersBadge() {
   if (!btn) return;
   let count = 0;
   if (AppState.filterGenre && AppState.filterGenre !== 'alle') count += 1;
-  if (AppState.filterLanguage && AppState.filterLanguage !== 'alle') count += 1;
+  if ((AppState.filterBookLanguage && AppState.filterBookLanguage !== 'alle') || (AppState.filterLanguage && AppState.filterLanguage !== 'alle')) count += 1;
+  if (AppState.filterSticker && AppState.filterSticker !== 'alle') count += 1;
   const distEl = document.getElementById('shelfDistanceSelect');
   if (distEl && distEl.value && distEl.value !== 'alle') count += 1;
   const sortEl = document.getElementById('shelfSortSelect');
@@ -5502,7 +5504,7 @@ window.previewCabinetTheme = function () {
 window.setStickerFilter = function (sticker) {
   AppState.filterSticker = sticker;
   AppState.shelfPage = 1;
-  document.querySelectorAll('.sticker-filter-btn').forEach((btn) => {
+  document.querySelectorAll('[data-sticker-filter]').forEach((btn) => {
     btn.classList.toggle('active', btn.getAttribute('data-sticker-filter') === sticker);
   });
 
@@ -5519,6 +5521,7 @@ window.setStickerFilter = function (sticker) {
     sortSel.value = 'dichtbij';
   }
 
+  updateExtraFiltersBadge();
   renderBookshelfView();
 };
 
@@ -5560,8 +5563,6 @@ window.resetAllShelfFilters = function () {
   const sEl = document.getElementById('searchBooksInput');
   const gEl = document.getElementById('genreFilterSelect');
   const pEl = document.getElementById('postalFilterInput');
-  const distEl = document.getElementById('shelfDistanceSelect');
-  if (distEl && distEl.value && distEl.value !== 'alle') count += 1;
   const sortEl = document.getElementById('shelfSortSelect');
   if (sEl) sEl.value = '';
   if (gEl) gEl.value = 'alle';
@@ -5573,6 +5574,7 @@ window.resetAllShelfFilters = function () {
   AppState.searchQuery = '';
   AppState.filterPostal = '';
   AppState.filterGenre = 'alle';
+  AppState.filterBookLanguage = 'alle';
   AppState.filterLanguage = 'alle';
   AppState.filterSticker = 'alle';
   AppState.shelfPage = 1;
