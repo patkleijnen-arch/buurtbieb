@@ -5650,6 +5650,18 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshAllViews();
   maybeShowWelcomeGuideOnStartup();
 
+  // Voorkom ongewenst pinch-zoomen op iOS Safari (behalve op de interactieve MiniBieb-kaart)
+  document.addEventListener(
+    'gesturestart',
+    (e) => {
+      if (e.target && typeof e.target.closest === 'function' && e.target.closest('#miniBiebLeafletMap')) {
+        return;
+      }
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+
   // Registreer Service Worker voor PWA ondersteuning
   if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
     navigator.serviceWorker.register('./sw.js').catch((err) => {
